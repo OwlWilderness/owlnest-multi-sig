@@ -17,17 +17,16 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
-  await deploy("OwlsNestMultiSig", {
+  await deploy("YourContract", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    //[deployer, "0x7f68704858cb70df2cddf8cf1bab8ec5708b023d", "0x97843608a00e2bbc75ab0c1911387e002565dede", "0x1a4c2b35c9b4cc9f9a833a43dbe3a78fdb80bb54"]
     from: deployer,
-    args: [ localChainId, ["0x97843608a00e2bbc75ab0c1911387e002565dede", "0xa2a858f76e4e53e5cf64d8BB38d164F128062e5d"], 1],
+    // args: [ "Hello", ethers.utils.parseEther("1.5") ],
     log: true,
     waitConfirmations: 5,
   });
 
   // Getting a previously deployed contract
-  const OwlsNestMultiSig = await ethers.getContractAt("OwlsNestMultiSig", deployer);
+  const YourContract = await ethers.getContractAt("YourContract", deployer);
   /*  await YourContract.setPurpose("Hello");
   
     To take ownership of yourContract using the ownable library uncomment next line and add the 
@@ -77,4 +76,4 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   //   console.error(error);
   // }
 };
-module.exports.tags = ["OwlsNestMultiSig"];
+module.exports.tags = ["YourContract"];
