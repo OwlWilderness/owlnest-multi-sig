@@ -41,17 +41,26 @@ contract OwlsNestMultiSig {
     //--# required signatures  > 0
     //--owners are valid (not null address)
     //--owners are unique
-    constructor(uint256 _chainId, address[] memory _owners, uint _signaturesRequired) {
-        require(_signaturesRequired > 0, "constructor: must be non-zero sigs required");
-        signaturesRequired = _signaturesRequired;
+    constructor(uint256 _chainId, address[] memory _owners, uint _signaturesRequired)  {
+        
+        _updateSigsRequired(_signaturesRequired);
         for (uint i = 0; i < _owners.length; i++) {
             address owner = _owners[i];
-            require(owner != address(0), "constructor: zero address");
-            require(!isOwner[owner], "constructor: owner not unique");
-            isOwner[owner] = true;
-            emit Owner(owner, isOwner[owner]);
+            _addSigner(owner);
         }
         chainId = _chainId;
+    }
+
+    function _addSigner(address newSigner) private {
+        require(newSigner != address(0), "_addSigner: zero address");
+        require(!isOwner[newSigner], "_addSigner: owner not unique");
+        isOwner[newSigner] = true;
+        emit Owner(newSigner, isOwner[newSigner]);
+    }
+    
+    function _updateSigsRequired(uint _signaturesRequired) private {
+        require(_signaturesRequired > 0, "constructor: must be non-zero sigs required");
+        signaturesRequired = _signaturesRequired;
     }
 
     modifier onlySelf() {
@@ -59,26 +68,21 @@ contract OwlsNestMultiSig {
         _;
     }
 
-    function addSigner(address newSigner, uint256 newSignaturesRequired) public onlySelf {
-        require(newSigner != address(0), "addSigner: zero address");
-        require(!isOwner[newSigner], "addSigner: owner not unique");
-        require(newSignaturesRequired > 0, "addSigner: must be non-zero sigs required");
-        isOwner[newSigner] = true;
-        signaturesRequired = newSignaturesRequired;
-        emit Owner(newSigner, isOwner[newSigner]);
+
+    function addSigner(address newSigner, uint256 newSignaturesRequired) public onlySelf{
+        _addSigner(newSigner);
+        _updateSigsRequired(newSignaturesRequired);
     }
 
     function removeSigner(address oldSigner, uint256 newSignaturesRequired) public onlySelf {
         require(isOwner[oldSigner], "removeSigner: not owner");
-        require(newSignaturesRequired > 0, "removeSigner: must be non-zero sigs required");
+        _updateSigsRequired(newSignaturesRequired);
         isOwner[oldSigner] = false;
-        signaturesRequired = newSignaturesRequired;
         emit Owner(oldSigner, isOwner[oldSigner]);
     }
 
     function updateSignaturesRequired(uint256 newSignaturesRequired) public onlySelf {
-        require(newSignaturesRequired > 0, "updateSignaturesRequired: must be non-zero sigs required");
-        signaturesRequired = newSignaturesRequired;
+        _updateSigsRequired(newSignaturesRequired);
     }
 
     function getTransactionHash(uint256 _nonce, address to, uint256 value, bytes memory data) public view returns (bytes32) {

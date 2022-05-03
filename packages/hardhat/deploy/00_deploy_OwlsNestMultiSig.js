@@ -21,7 +21,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     //[deployer, "0x7f68704858cb70df2cddf8cf1bab8ec5708b023d", "0x97843608a00e2bbc75ab0c1911387e002565dede", "0x1a4c2b35c9b4cc9f9a833a43dbe3a78fdb80bb54"]
     from: deployer,
-    args: [ localChainId, ["0x97843608a00e2bbc75ab0c1911387e002565dede", "0xa2a858f76e4e53e5cf64d8BB38d164F128062e5d"], 1],
+    args: [ localChainId, [deployer, "0x7f68704858cb70df2cddf8cf1bab8ec5708b023d", "0x97843608a00e2bbc75ab0c1911387e002565dede", "0x1a4c2b35c9b4cc9f9a833a43dbe3a78fdb80bb54"], 2],
     log: true,
     waitConfirmations: 5,
   });
