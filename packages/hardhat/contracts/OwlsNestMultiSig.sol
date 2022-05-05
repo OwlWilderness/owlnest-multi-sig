@@ -31,7 +31,7 @@ contract OwlsNestMultiSig {
 
     //variable declarations
     uint public signaturesRequired;
-    uint public nonce;
+    uint public nonce = 1;
     uint public chainId;
 
     //constructor 

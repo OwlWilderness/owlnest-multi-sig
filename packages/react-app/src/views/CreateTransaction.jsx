@@ -4,7 +4,10 @@ import { Button, Select, List, Divider, Input, Card, DatePicker, Slider, Switch,
 import { SyncOutlined } from "@ant-design/icons";
 import { parseEther, formatEther } from "@ethersproject/units";
 import { Address, AddressInput, Balance, EtherInput, Blockie } from "../components";
-import { useContractReader, useEventListener } from "../hooks";
+//import { useContractReader, useEventListener } from "../hooks";
+import {
+  useContractReader
+} from "eth-hooks";
 const { Option } = Select;
 
 const axios = require("axios");
@@ -22,15 +25,14 @@ export default function CreateTransaction({
   tx,
   readContracts,
   writeContracts,
-  nonce
 }) {
   const history = useHistory();
 
-  // keep track of a variable from the contract in the local React state:
-  //const nonce = useContractReader(readContracts, contractName, "nonce");
-  const calldataInputRef = useRef("0x");
+    // keep track of a variable from the contract in the local React state:
+    const nonce = useContractReader(readContracts, contractName, "nonce")
+    console.log("# nonce:",nonce)
 
-  console.log("🤗 nonce:", nonce);
+  const calldataInputRef = useRef("0x");
 
   console.log("price", price);
 

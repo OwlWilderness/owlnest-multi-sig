@@ -15,6 +15,7 @@ import { Link, Route, Switch, useLocation, BrowserRouter } from "react-router-do
 import "./App.css";
 import "antd/dist/antd.css";
 import {
+  Balance,
   Account,
   Contract,
   Faucet,
@@ -32,8 +33,9 @@ import externalContracts from "./contracts/external_contracts";
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { Home, FrontPage, Owners, CreateTransaction, Transactions, ExampleUI, Hints, Subgraph } from "./views";
-import { useStaticJsonRPC, useExchangePrice, useUserProvider, useEventListener, useExternalContractLoader } from "./hooks";
-
+import { useExchangePrice, useUserProvider, useEventListener, useExternalContractLoader,useStaticJsonRPC } from "./hooks";
+import {  StaticJsonRpcProvider, JsonRpcProvider, Web3Provider,InfuraProvider } from "@ethersproject/providers";
+import WalletConnectProvider from "@walletconnect/web3-provider";
 
 const { ethers } = require("ethers");
 /*
@@ -206,6 +208,10 @@ const poolServerUrl = "http://localhost:49832/"
   const withdrawStreamEvents = useEventListener(readContracts, mulSigContractName, "Withdraw", localProvider, 1);
   if(DEBUG) console.log("📟 withdrawStreamEvents:",withdrawStreamEvents)
 
+  // If you want to call a function on a new block
+  useOnBlock(mainnetProvider, () => {
+    console.log(`⛓ A new mainnet block is here: ${mainnetProvider._lastBlockNumber}`)
+  })
 
 
   /*
@@ -252,6 +258,7 @@ const poolServerUrl = "http://localhost:49832/"
     localChainId,
     myMainnetDAIBalance,
   ]);
+
 
   const loadWeb3Modal = useCallback(async () => {
     const provider = await web3Modal.connect();
@@ -385,7 +392,6 @@ const poolServerUrl = "http://localhost:49832/"
               writeContracts={writeContracts}
               readContracts={readContracts}
               setRoute={setRoute}
-              nonce={nonce}
             />
           </Route>
           <Route path="/pool">
