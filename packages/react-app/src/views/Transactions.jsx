@@ -37,6 +37,7 @@ export default function Transactions({
       for (const i in res.data) {
         // console.log("look through signatures of ",res.data[i])
         const thisNonce = ethers.BigNumber.from(res.data[i].nonce);
+        console.log("this.nonce ",thisNonce)
         if (thisNonce && nonce && thisNonce.gte(nonce)) {
           const validSignatures = [];
           for (const s in res.data[i].signatures) {
@@ -166,7 +167,7 @@ export default function Transactions({
                     item.data,
                   );
                   console.log("newHash", newHash);
-
+                  console.log("item.nonce", item.nonce);
                   console.log("item.signatures", item.signatures);
 
                   const [finalSigList, finalSigners] = await getSortedSigList(item.signatures, newHash);

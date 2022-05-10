@@ -308,14 +308,14 @@ const poolServerUrl = "http://localhost:49832/"
         USE_NETWORK_SELECTOR={USE_NETWORK_SELECTOR}
       />
       <Menu style={{ textAlign: "center", marginTop: 40 }} selectedKeys={[location.pathname]} mode="horizontal">
+        {/*<Menu.Item key="/Home">
+          <Link to="/Home">Home</Link>
+        </Menu.Item>*/}
         <Menu.Item key="/">
-          <Link to="/">Home</Link>
+          <Link to="/">Owners</Link>
         </Menu.Item>
         <Menu.Item key="/multisig">
           <Link to="/multisig">MultiSig</Link>
-        </Menu.Item>
-        <Menu.Item key="/owners">
-          <Link to="/owners">Owners</Link>
         </Menu.Item>
         <Menu.Item key="/create">
           <Link to="/create">Create Transaction</Link>
@@ -323,13 +323,13 @@ const poolServerUrl = "http://localhost:49832/"
         <Menu.Item key="/pool">
           <Link to="/pool">Pool</Link>
         </Menu.Item>
-        <Menu.Item key="/debug">
+        {/*<Menu.Item key="/debug">
           <Link to="/debug">Debug Your Contract</Link>
         </Menu.Item>
         <Menu.Item key="/debugms">
           <Link to="/debugms">Debug OwlsNestMultiSig</Link>
         </Menu.Item>
-        {/*<Menu.Item key="/hints">
+        <Menu.Item key="/hints">
           <Link to="/hints">Hints</Link>
         </Menu.Item>
         <Menu.Item key="/exampleui">
@@ -337,18 +337,14 @@ const poolServerUrl = "http://localhost:49832/"
         </Menu.Item>
         <Menu.Item key="/mainnetdai">
           <Link to="/mainnetdai">Mainnet DAI</Link>
-        </Menu.Item>*/}
+        </Menu.Item>
         <Menu.Item key="/subgraph">
           <Link to="/subgraph">Subgraph</Link>
-        </Menu.Item>
+        </Menu.Item>*/}
       </Menu>
 
       <Switch>
-        <Route exact path="/">
-          {/* pass in any web3 props to this Home component. For example, yourLocalBalance */}
-           <Home yourLocalBalance={yourLocalBalance} readContracts={readContracts} /> 
 
-        </Route>
         <Route exact path="/multisig">
             <FrontPage
               executeTransactionEvents={executeTransactionEvents}
@@ -360,7 +356,7 @@ const poolServerUrl = "http://localhost:49832/"
               blockExplorer={blockExplorer}
             />
           </Route>
-          <Route exact path="/owners">
+          <Route exact path="/">
             <Owners
               contractName={mulSigContractName}
               address={address}
