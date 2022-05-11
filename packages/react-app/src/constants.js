@@ -46,6 +46,14 @@ export const NETWORKS = {
         blockExplorer: "https://kovan.etherscan.io/",
         faucet: "https://gitter.im/kovan-testnet/faucet",//https://faucet.kovan.network/
     },
+    kovanOptimism: {
+        name: "kovanOptimism",
+        color: '#7003DD',
+        chainId: 69,
+        rpcUrl: `https://optimism-kovan.infura.io/v3/${INFURA_ID}`,
+        blockExplorer: "https://kovan-optimistic.etherscan.io",
+        faucet: "https://gitter.im/optimism-kovan-testnet/faucet",//https://faucet.kovan.network/
+    },
     rinkeby: {
         name: "rinkeby",
         color: '#e0d068',

@@ -42,6 +42,14 @@ contract OwlsNestMultiSig {
         _;
     }
 
+    function transferFunds(address _to, uint256 _amount) public onlySelf {
+        require(_to != address(0), "transferFunds: zero address");
+        require(_amount > 0, "transferFunds: zero amount");
+        require(address(this).balance >= _amount, "transferFunds: amount exceeds available balance");
+        (bool ok, ) = address(this).call{value: _amount}("");
+        require(ok, "could not transfer ether");
+    }
+
     function addSigner(address newSigner, uint256 newSignaturesRequired) public onlySelf {
         require(newSigner != address(0), "addSigner: zero address");
         require(!isOwner[newSigner], "addSigner: owner not unique");

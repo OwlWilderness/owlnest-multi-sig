@@ -14,6 +14,9 @@ require("@nomiclabs/hardhat-ethers");
 require("@nomiclabs/hardhat-etherscan");
 
 const { isAddress, getAddress, formatUnits, parseUnits } = utils;
+const INFURA_ID = process.env.RINKEBY_INFURA_KEY;
+const MAINNET_ETHERSCAN_KEY = process.env.MAINNET_ETHERSCAN_KEY;
+const OPTIMISM_ETHERSCAN_KEY = process.env.OPTIMISM_ETHERSCAN_KEY;
 
 /*
       📡 This is where you configure your deploy configuration for 🏗 scaffold-eth
@@ -56,7 +59,7 @@ module.exports = {
     currency: "USD",
     coinmarketcap: process.env.COINMARKETCAP || null,
   },
-
+  
   // if you want to deploy to a testnet, mainnet, or xdai, you will need to configure:
   // 1. An Infura key (or similar)
   // 2. A private key for the deployer
@@ -77,7 +80,7 @@ module.exports = {
         },
     },
     rinkeby: {
-      url: "https://rinkeby.infura.io/v3/58daabf0f6e3462aa9aef8ccb9f4ead4", // <---- YOUR INFURA ID! (or it won't work)
+      url: `https://rinkeby.infura.io/v3/${INFURA_ID}`, // <---- YOUR INFURA ID! (or it won't work)
       //    url: "https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXXXXX/eth/rinkeby", // <---- YOUR MORALIS ID! (not limited to infura)
       accounts: {
         mnemonic: mnemonic(),
@@ -158,6 +161,7 @@ module.exports = {
     },
     optimism: {
       url: "https://mainnet.optimism.io",
+      chainId: 42,
       accounts: {
         mnemonic: mnemonic(),
       },
@@ -167,6 +171,7 @@ module.exports = {
     },
     kovanOptimism: {
       url: "https://kovan.optimism.io",
+      chainId: 69,
       accounts: {
         mnemonic: mnemonic(),
       },
@@ -294,8 +299,10 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      mainnet: "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW",
-      // add other network's API key here
+      mainnet: MAINNET_ETHERSCAN_KEY,
+        // optimism
+        optimism: OPTIMISM_ETHERSCAN_KEY,
+        kovanOptimism: OPTIMISM_ETHERSCAN_KEY,
     },
   },
   abiExporter: {

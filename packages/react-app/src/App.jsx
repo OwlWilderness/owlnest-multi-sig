@@ -177,7 +177,7 @@ function App(props) {
   ]);
 
   // keep track of a variable from the contract in the local React state:
-  const purpose = useContractReader(readContracts, "YourContract", "purpose");
+  //const purpose = useContractReader(readContracts, "YourContract", "purpose");
 
   const mulSigContractName = "OwlsNestMultiSig";
 // const poolServerUrl = "https://backend.multisig.holdings:49832/"
@@ -407,12 +407,12 @@ const poolServerUrl = "http://localhost:49832/"
               nonce={nonce}
               signaturesRequired={signaturesRequired}
             /></Route>
-        <Route exact path="/debug">
-          {/*
+         {/*<Route exact path="/debug">
+         
                 🎛 this scaffolding is full of commonly used components
                 this <Contract/> component will automatically parse your ABI
                 and give you a form to interact with it locally
-            */}
+            
 
           <Contract
             name="YourContract"
@@ -423,7 +423,7 @@ const poolServerUrl = "http://localhost:49832/"
             blockExplorer={blockExplorer}
             contractConfig={contractConfig}
           />
-        </Route>
+        </Route>*/}
         <Route exact path="/debugms">
 
           <Contract
@@ -444,7 +444,7 @@ const poolServerUrl = "http://localhost:49832/"
             price={price}
           />
         </Route>
-        <Route path="/exampleui">
+        {/*<Route path="/exampleui">
           <ExampleUI
             address={address}
             userSigner={userSigner}
@@ -457,7 +457,7 @@ const poolServerUrl = "http://localhost:49832/"
             readContracts={readContracts}
             purpose={purpose}
           />
-        </Route>
+        </Route>*/}
         <Route path="/mainnetdai">
           <Contract
             name="DAI"

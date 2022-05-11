@@ -28,6 +28,8 @@
     "send": "yarn workspace @scaffold-eth/hardhat send",
     "ipfs": "yarn workspace @scaffold-eth/react-app ipfs",
     "surge": "yarn workspace @scaffold-eth/react-app surge",
+    "verify": "yarn workspace @scaffold-eth/hardhat verify",
+    "overify": "yarn workspace @scaffold-eth/hardhat overify",
     "s3": "yarn workspace @scaffold-eth/react-app s3",
     "ship": "yarn workspace @scaffold-eth/react-app ship",
     "generate": "yarn workspace @scaffold-eth/hardhat generate",
