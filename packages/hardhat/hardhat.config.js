@@ -94,7 +94,7 @@ module.exports = {
       },
     },
     mainnet: {
-      url: "https://mainnet.infura.io/v3/460f40a260564ac4a4f4b3fffb032dad", // <---- YOUR INFURA ID! (or it won't work)
+      url: `https://mainnet.infura.io/v3/${INFURA_ID}`, // <---- YOUR INFURA ID! (or it won't work)
       //      url: "https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXXXXXXX/eth/mainnet", // <---- YOUR MORALIS ID! (not limited to infura)
       gasPrice: mainnetGwei * 1000000000,
       accounts: {
@@ -160,8 +160,8 @@ module.exports = {
       },
     },
     optimism: {
-      url: "https://mainnet.optimism.io",
-      chainId: 42,
+      url: `https://optimism-mainnet.infura.io/v3/${INFURA_ID}`,
+      chainId: 10,
       accounts: {
         mnemonic: mnemonic(),
       },
@@ -300,9 +300,9 @@ module.exports = {
   etherscan: {
     apiKey: {
       mainnet: MAINNET_ETHERSCAN_KEY,
-        // optimism
-        optimism: OPTIMISM_ETHERSCAN_KEY,
-        kovanOptimism: OPTIMISM_ETHERSCAN_KEY,
+      // optimism
+      optimisticEthereum: OPTIMISM_ETHERSCAN_KEY,
+      optimisticKovan: OPTIMISM_ETHERSCAN_KEY,
     },
   },
   abiExporter: {

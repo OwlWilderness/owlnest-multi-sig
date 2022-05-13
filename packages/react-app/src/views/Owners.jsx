@@ -5,16 +5,23 @@ import { SyncOutlined } from '@ant-design/icons';
 import { Address, AddressInput, Balance, Blockie } from "../components";
 import { parseEther, formatEther } from "@ethersproject/units";
 import { ethers } from "ethers";
-import { useEventListener, useLocalStorage } from "../hooks";
+import {  useLocalStorage } from "../hooks";
+import { useEventListener } from "eth-hooks/events/useEventListener";
 import {
-  useContractReader
+  useContractReader,
+  
 } from "eth-hooks";
 const axios = require('axios');
 const { Option } = Select;
 
-export default function Owners({contractName, ownerEvents, signaturesRequired, address, nonce, userProvider, mainnetProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, blockExplorer }) {
+
+
+export default function Owners({contractName, signaturesRequired, address, nonce, userProvider, mainnetProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, blockExplorer }) {
 
   const history = useHistory();
+  const ownerEvents = useEventListener(readContracts, contractName, "Owner", localProvider, 1);
+
+  //console.log("📟 ownerEvents:",ownerEvents)
 
   const [to, setTo] = useLocalStorage("to");
   const [amount, setAmount] = useLocalStorage("amount","0");

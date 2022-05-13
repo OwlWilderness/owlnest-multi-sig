@@ -5,8 +5,8 @@ import { SyncOutlined } from '@ant-design/icons';
 import { Address, AddressInput, Balance, Blockie, EtherInput } from "../components";
 import { parseEther, formatEther } from "@ethersproject/units";
 import { ethers } from "ethers";
-import { useContractReader, useEventListener, useLocalStorage, useBalance } from "../hooks";
-import { useBlockNumber } from "eth-hooks";
+import { useEventListener, useLocalStorage } from "../hooks";
+import { useBlockNumber, useBalance, useContractReader } from "eth-hooks";
 const axios = require('axios');
 const { Option } = Select;
 

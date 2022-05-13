@@ -69,3 +69,4 @@ yarn-error.log*
 /doc
 packages/services/arbitrum
 packages/services/optimism
+packages/react-app/src/constants.js
