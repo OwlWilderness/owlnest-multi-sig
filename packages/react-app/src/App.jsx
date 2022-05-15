@@ -1,5 +1,6 @@
 import { Row, Col, Button, Menu, Alert, Switch as SwitchD } from "antd";
 import "antd/dist/antd.css";
+import Authereum from "authereum";
 import {
   useBalance,
   useContractLoader,
@@ -10,6 +11,10 @@ import {
   useUserAddress
 } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
+import { useEventListener } from "eth-hooks/events/useEventListener";
+import Fortmatic from "fortmatic";
+// https://www.npmjs.com/package/ipfs-http-client
+// import { create } from "ipfs-http-client";
 import React, { useCallback, useEffect, useState } from "react";
 import { Link, Route, Switch, useLocation, BrowserRouter } from "react-router-dom";
 import "./App.css";
@@ -38,6 +43,7 @@ import {  StaticJsonRpcProvider, JsonRpcProvider, Web3Provider,InfuraProvider } 
 import WalletConnectProvider from "@walletconnect/web3-provider";
 import { useEventListener } from "eth-hooks/events/useEventListener";
 const { ethers } = require("ethers");
+
 /*
     Welcome to 🏗 scaffold-eth !
     Code:
@@ -53,30 +59,149 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const initialNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const targetNetwork = NETWORKS.localhost;//.mumbai; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = true;
 const NETWORKCHECK = true;
-const USE_BURNER_WALLET = true; // toggle burner wallet feature
-const USE_NETWORK_SELECTOR = false;
 
-const web3Modal = Web3ModalSetup();
+// EXAMPLE STARTING JSON:
+const STARTING_JSON = {
+  description: "It's actually a bison?",
+  external_url: "https://austingriffith.com/portfolio/paintings/", // <-- this can link to a page for the specific file too
+  image: "https://austingriffith.com/images/paintings/buffalo.jpg",
+  name: "Buffalo",
+  attributes: [
+    {
+      trait_type: "BackgroundColor",
+      value: "green",
+    },
+    {
+      trait_type: "Eyes",
+      value: "googly",
+    },
+  ],
+};
+
+// helper function to "Get" from IPFS
+// you usually go content.toString() after this...
+const getFromIPFS = async hashToGet => {
+  for await (const file of ipfs.get(hashToGet)) {
+    console.log(file.path);
+    if (!file.content) continue;
+    const content = new BufferList();
+    for await (const chunk of file.content) {
+      content.append(chunk);
+    }
+    console.log(content);
+    return content;
+  }
+};
 
 // 🛰 providers
-const providers = [
-  "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
-  `https://eth-mainnet.alchemyapi.io/v2/${ALCHEMY_KEY}`,
-  "https://rpc.scaffoldeth.io:48544",
-];
+if (DEBUG) console.log("📡 Connecting to Mainnet Ethereum");
+// const mainnetProvider = getDefaultProvider("mainnet", { infura: INFURA_ID, etherscan: ETHERSCAN_KEY, quorum: 1 });
+// const mainnetProvider = new InfuraProvider("mainnet",INFURA_ID);
+//
+// attempt to connect to our own scaffold eth rpc and if that fails fall back to infura...
+// Using StaticJsonRpcProvider as the chainId won't change see https://github.com/ethers-io/ethers.js/issues/901
+const scaffoldEthProvider = navigator.onLine
+  ? new ethers.providers.StaticJsonRpcProvider("https://rpc.scaffoldeth.io:48544")
+  : null;
+const poktMainnetProvider = navigator.onLine
+  ? new ethers.providers.StaticJsonRpcProvider(
+      "https://eth-mainnet.gateway.pokt.network/v1/lb/611156b4a585a20035148406",
+    )
+  : null;
+const mainnetInfura = navigator.onLine
+  ? new ethers.providers.StaticJsonRpcProvider("https://mainnet.infura.io/v3/" + INFURA_ID)
+  : null;
+// ( ⚠️ Getting "failed to meet quorum" errors? Check your INFURA_ID
+
+// 🏠 Your local provider is usually pointed at your local blockchain
+const localProviderUrl = targetNetwork.rpcUrl;
+// as you deploy to other networks you can set REACT_APP_PROVIDER=https://dai.poa.network in packages/react-app/.env
+const localProviderUrlFromEnv = process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : localProviderUrl;
+if (DEBUG) console.log("🏠 Connecting to provider:", localProviderUrlFromEnv);
+const localProvider = new ethers.providers.StaticJsonRpcProvider(localProviderUrlFromEnv);
+
+// 🔭 block explorer URL
+const blockExplorer = targetNetwork.blockExplorer;
+
+// Coinbase walletLink init
+const walletLink = new WalletLink({
+  appName: "coinbase",
+});
+
+// WalletLink provider
+const walletLinkProvider = walletLink.makeWeb3Provider(`https://mainnet.infura.io/v3/${INFURA_ID}`, 1);
+
+// Portis ID: 6255fb2b-58c8-433b-a2c9-62098c05ddc9
+/*
+  Web3 modal helps us "connect" external wallets:
+*/
+const web3Modal = new Web3Modal({
+  network: "mainnet", // Optional. If using WalletConnect on xDai, change network to "xdai" and add RPC info below for xDai chain.
+  cacheProvider: true, // optional
+  theme: "light", // optional. Change to "dark" for a dark theme.
+  providerOptions: {
+    walletconnect: {
+      package: WalletConnectProvider, // required
+      options: {
+        bridge: "https://polygon.bridge.walletconnect.org",
+        infuraId: INFURA_ID,
+        rpc: {
+          1: `https://mainnet.infura.io/v3/${INFURA_ID}`, // mainnet // For more WalletConnect providers: https://docs.walletconnect.org/quick-start/dapps/web3-provider#required
+          42: `https://kovan.infura.io/v3/${INFURA_ID}`,
+          100: "https://dai.poa.network", // xDai
+        },
+      },
+    },
+    portis: {
+      display: {
+        logo: "https://user-images.githubusercontent.com/9419140/128913641-d025bc0c-e059-42de-a57b-422f196867ce.png",
+        name: "Portis",
+        description: "Connect to Portis App",
+      },
+      package: Portis,
+      options: {
+        id: "6255fb2b-58c8-433b-a2c9-62098c05ddc9",
+      },
+    },
+    fortmatic: {
+      package: Fortmatic, // required
+      options: {
+        key: "pk_live_5A7C91B2FC585A17", // required
+      },
+    },
+    "custom-walletlink": {
+      display: {
+        logo: "https://play-lh.googleusercontent.com/PjoJoG27miSglVBXoXrxBSLveV6e3EeBPpNY55aiUUBM9Q1RCETKCOqdOkX2ZydqVf0",
+        name: "Coinbase",
+        description: "Connect to Coinbase Wallet (not Coinbase App)",
+      },
+      package: walletLinkProvider,
+      connector: async (provider, _options) => {
+        await provider.enable();
+        return provider;
+      },
+    },
+    authereum: {
+      package: Authereum, // required
+    },
+  },
+});
 
 
 
 
 function App(props) {
-  // specify all the chains your app is available on. Eg: ['localhost', 'mainnet', ...otherNetworks ]
-  // reference './constants.js' for other networks
-  const networkOptions = [initialNetwork.name, "mainnet", "rinkeby"];
+  const mainnetProvider =
+    poktMainnetProvider && poktMainnetProvider._isProvider
+      ? poktMainnetProvider
+      : scaffoldEthProvider && scaffoldEthProvider._network
+      ? scaffoldEthProvider
+      : mainnetInfura;
 
   const [injectedProvider, setInjectedProvider] = useState();
   const [address, setAddress] = useState();
@@ -92,7 +217,7 @@ function App(props) {
   const localProvider = useStaticJsonRPC([
     process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : targetNetwork.rpcUrl,
   ]);
-  const mainnetProvider = useStaticJsonRPC(providers);
+  //const mainnetProvider = useStaticJsonRPC(providers);
   if (DEBUG) console.log(`Using ${selectedNetwork} network`);
   
   const userProvider = useUserProvider(injectedProvider, localProvider);
@@ -116,7 +241,7 @@ function App(props) {
   /* 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation */
   const gasPrice = useGasPrice(targetNetwork, "fast");
   // Use your injected provider from 🦊 Metamask or if you don't have it then instantly generate a 🔥 burner wallet.
-  const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider, USE_BURNER_WALLET);
+  const userProviderAndSigner = useUserProviderAndSigner(injectedProvider, localProvider);
   const userSigner = userProviderAndSigner.signer;
 
 
@@ -140,15 +265,16 @@ function App(props) {
   // The transactor wraps transactions and provides notificiations
   const tx = Transactor(userSigner, gasPrice);
 
+  // Faucet Tx can be used to send funds from the faucet
+  const faucetTx = Transactor(localProvider, gasPrice);
+
   // 🏗 scaffold-eth is full of handy hooks like this one to get your balance:
   const yourLocalBalance = useBalance(localProvider, address);
 
   // Just plug in different 🛰 providers to get your balance on different chains:
   const yourMainnetBalance = useBalance(mainnetProvider, address);
 
-  // const contractConfig = useContractConfig();
-
-  const contractConfig = { deployedContracts: deployedContracts || {}, externalContracts: externalContracts || {} };
+  const contractConfig = useContractConfig();
 
   // Load in your local 📝 contract and read a value from it:
   const readContracts = useContractLoader(localProvider, contractConfig);
@@ -170,6 +296,8 @@ function App(props) {
   const myMainnetDAIBalance = useContractReader(mainnetContracts, "DAI", "balanceOf", [
     "0x34aA3F359A9D614239015126635CE7732c18fDF3",
   ]);
+  
+  const deployer = "0x0a5d50420626f4ac60939a04bc4f3e3781dcf1a8";
 
   // keep track of a variable from the contract in the local React state:
   //const purpose = useContractReader(readContracts, "YourContract", "purpose");
@@ -324,6 +452,16 @@ const poolServerUrl = "http://localhost:49832/"
         <Menu.Item key="/debugms">
           <Link to="/debugms">Debug OwlsNestMultiSig</Link>
         </Menu.Item>
+        <Menu.Item key="/create">
+          <Link to="/create">Create Transaction</Link>
+        </Menu.Item>
+        <Menu.Item key="/pool">
+          <Link to="/pool">Pool</Link>
+        </Menu.Item>
+        {/*<Menu.Item key="/debugms">
+          <Link to="/debugms">Debug OwlsNestMultiSig</Link>
+        </Menu.Item>
+        
         <Menu.Item key="/hints">
           <Link to="/hints">Hints</Link>
         </Menu.Item>
@@ -339,7 +477,6 @@ const poolServerUrl = "http://localhost:49832/"
       </Menu>
 
       <Switch>
-
         <Route exact path="/multisig">
             <FrontPage
               executeTransactionEvents={executeTransactionEvents}
