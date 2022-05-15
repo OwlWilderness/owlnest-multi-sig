@@ -33,26 +33,21 @@ export default function Owners({contractName, ownerEvents, signaturesRequired, a
   return (
     <div>
       <h2 style={{marginTop:32}}>Signatures Required: {signaturesRequired?signaturesRequired.toNumber():<Spin></Spin>}</h2>
-      <List
-        style={{maxWidth:400,margin:"auto",marginTop:32}}
+       <List
+        style={{maxWidth:600,margin:"auto",marginTop:32}}
         bordered
-        dataSource={ownerEvents}
-        renderItem={(item) => {
-          return (
-            <List.Item key={"owner_"+item[0]}>
-            <Address
-              address={item[0]}
-              ensProvider={mainnetProvider}
-              blockExplorer={blockExplorer}
-              fontSize={32}
-            />
+      dataSource={ownerEvents}
+      renderItem={item => {
+        return (
+          <List.Item key={item.blockNumber + "_" + item.args.sender + "_" + item.args[1].toString()}>
+            <Address address={item.args[0]} ensProvider={mainnetProvider} size="long" fontSize={16} />
             <div style={{padding:16}}>
-              {item[1]?"👍":"👎"}
+              {item.args[1]?"👍":"👎"}
             </div>
-            </List.Item>
-          )
-        }}
-      />
+          </List.Item>
+        );
+      }}
+    />
 
       <div style={{border:"1px solid #cccccc", padding:16, width:400, margin:"auto",marginTop:64}}>
         <div style={{margin:8,padding:8}}>
