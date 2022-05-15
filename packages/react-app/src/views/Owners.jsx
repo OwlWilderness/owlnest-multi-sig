@@ -16,10 +16,10 @@ const { Option } = Select;
 
 
 
-export default function Owners({contractName, ownerEvents, signaturesRequired, address, nonce, userProvider, mainnetProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, blockExplorer }) {
+export default function Owners({contractName, signaturesRequired, address, nonce, userProvider, mainnetProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, blockExplorer }) {
 
   const history = useHistory();
- // const ownerEvents = useEventListener(readContracts, contractName, "Owner", localProvider, 1);
+  const ownerEvents = useEventListener(readContracts, contractName, "Owner", localProvider, 1);
 
   //console.log("📟 ownerEvents:",ownerEvents)
 
