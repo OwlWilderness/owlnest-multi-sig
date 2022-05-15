@@ -1,14 +1,12 @@
 // MY INFURA_ID, SWAP IN YOURS FROM https://infura.io/dashboard/ethereum
-export const INFURA_ID = "58daabf0f6e3462aa9aef8ccb9f4ead4";
-//dev - 568af3da01a043ecb2ac80bf69927b38
-// prod - 62e4d4d8e861447686db464b423bc591
+export const INFURA_ID = "58daabf0f6e3462aa9aef8ccb9f4ead4"
 //MY ETHERSCAN_ID, SWAP IN YOURS FROM https://etherscan.io/myapikey
-export const ETHERSCAN_KEY = "93J3DMA1DJ5JN1BTWVR4CUGVAWPZWXAGF7";
+export const ETHERSCAN_KEY = "TURDV4MKG3ZVVTE1JGFD4CRQTV7XUGVJH5" 
 
 //BLOCKNATIVE ID FOR Notify.js:
 export const BLOCKNATIVE_DAPPID = "0b58206a-f3c0-4701-a62f-73c7243e8c77"
 
-export const ALCHEMY_KEY = "QhCR1xYcH5KPtHUSgNCjE6IV912oy1iW";
+export const ALCHEMY_KEY = "QhCR1xYcH5KPtHUSgNCjE6IV912oy1iW"
 // EXTERNAL CONTRACTS
 
 export const DAI_ADDRESS = "0x6B175474E89094C44Da98b954EedeAC495271d0F"
@@ -53,6 +51,13 @@ export const NETWORKS = {
         rpcUrl: `https://optimism-kovan.infura.io/v3/${INFURA_ID}`,
         blockExplorer: "https://kovan-optimistic.etherscan.io",
         faucet: "https://gitter.im/optimism-kovan-testnet/faucet",//https://faucet.kovan.network/
+    },
+    optimism: {
+        name: "optimism",
+        color: '#7003DD',
+        chainId: 10,
+        rpcUrl: `https://optimism-mainnet.infura.io/v3/${INFURA_ID}`,
+        blockExplorer: "https://optimistic.etherscan.io",
     },
     rinkeby: {
         name: "rinkeby",

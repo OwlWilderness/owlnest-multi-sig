@@ -72,12 +72,13 @@ module.exports = {
       url: "http://localhost:8545",
       /*      
         notice no mnemonic here? it will just use account 0 of the hardhat node to deploy
-        (you can put in a mnemonic here to set the deployer locally)
-      
-      */
+        (you can put in a mnemonic here to set the deployer locally)  
         accounts: {
           mnemonic: mnemonic(),
         },
+      
+      */
+      
     },
     rinkeby: {
       url: `https://rinkeby.infura.io/v3/${INFURA_ID}`, // <---- YOUR INFURA ID! (or it won't work)
@@ -170,7 +171,7 @@ module.exports = {
       },
     },
     kovanOptimism: {
-      url: "https://kovan.optimism.io",
+      url: "https://optimism-kovan.infura.io/v3/58daabf0f6e3462aa9aef8ccb9f4ead4",
       chainId: 69,
       accounts: {
         mnemonic: mnemonic(),
