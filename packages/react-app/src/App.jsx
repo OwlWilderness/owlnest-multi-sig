@@ -249,6 +249,7 @@ function App(props) {
   const faucetAvailable = localProvider && localProvider.connection && targetNetwork.name.indexOf("local") !== -1;
 
   const contractName = "OwlsNest";
+  const signaturesRequired = useContractReader(readContracts, contractName, "signaturesRequired");
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -285,6 +286,7 @@ function App(props) {
             blockExplorer={blockExplorer}
             localProvider={localProvider}
             mainnetProvider={mainnetProvider}
+            signaturesRequired={signaturesRequired}
             startBlock={1}
           />  
         </Route>
