@@ -4,6 +4,8 @@ import { Button, Select, List, Divider, Input, Card, DatePicker, Slider, Switch,
 import { SyncOutlined } from "@ant-design/icons";
 import { parseEther, formatEther } from "@ethersproject/units";
 import { Address, AddressInput, Balance, EtherInput, Blockie } from "../components";
+import {  useLocalStorage } from "../hooks";
+
 //import { useContractReader, useEventListener } from "../hooks";
 import {
   useContractReader
@@ -72,7 +74,7 @@ export default function CreateTransaction({
         } else if (decodedDataObject.signature === "removeSigner(address)"){
           setMethodName("removeSigner")
           setSelectDisabled(true)
-        } else if (decodedDataObject.signature === "updateSigsRequired(uint)"){
+        } else if (decodedDataObject.signature === "updateSigsRequired(uint256)"){
           setMethodName("updateSigsRequired")
           setSelectDisabled(true)
         }        

@@ -16,7 +16,8 @@ contract OwlsNest {
 
     //variables
     string public purpose = "Supporting Wilderness Conservation";
-    uint public signaturesRequired;
+    uint256 public signaturesRequired;
+    uint256 public nonce = 1;
 
     //mappings
     mapping (address => bool) public owners;
@@ -38,7 +39,7 @@ contract OwlsNest {
         _removeSigner(oldSigner);
     }
     
-    function updateSigsRequired(uint newSigsRequired) public onlySelf {
+    function updateSigsRequired(uint256 newSigsRequired) public onlySelf {
         _updateSigsRequired(newSigsRequired);
     }
 
@@ -66,7 +67,7 @@ contract OwlsNest {
       emit Owner(signer, owners[signer]);
     }
 
-  function _updateSigsRequired(uint _signaturesRequired) private {
+  function _updateSigsRequired(uint256 _signaturesRequired) private {
       require(_signaturesRequired > 0, "constructor: must be non-zero sigs required");
       signaturesRequired = _signaturesRequired;
       emit SigsRequired(msg.sender, _signaturesRequired);

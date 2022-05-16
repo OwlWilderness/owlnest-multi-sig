@@ -32,6 +32,7 @@ import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
 import { Home, ExampleUI, Hints, Subgraph, Owners } from "./views";
 import { useStaticJsonRPC } from "./hooks";
+import CreateTransaction from "./views/CreateTransaction";
 
 const { ethers } = require("ethers");
 /*
@@ -57,7 +58,7 @@ const { ethers } = require("ethers");
 const initialNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
-const DEBUG = true;
+const DEBUG = false;
 const NETWORKCHECK = true;
 const USE_BURNER_WALLET = true; // toggle burner wallet feature
 const USE_NETWORK_SELECTOR = false;
@@ -288,7 +289,20 @@ function App(props) {
           />  
         </Route>
         <Route exact path="/create">
-          no - thing
+         <CreateTransaction 
+             // poolServerUrl={poolServerUrl}
+              contractName={contractName}
+              address={address}
+            //  userProvider={userProvider}
+              mainnetProvider={mainnetProvider}
+              localProvider={localProvider}
+              yourLocalBalance={yourLocalBalance}
+              price={price}
+              tx={tx}
+              writeContracts={writeContracts}
+              readContracts={readContracts}
+            //  setRoute={setRoute}
+         />
         </Route>
         <Route exact path="/debug">
 
