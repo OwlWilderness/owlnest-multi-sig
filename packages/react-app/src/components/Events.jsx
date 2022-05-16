@@ -31,7 +31,9 @@ export default function Events({ contracts, contractName, eventName, localProvid
           ? " ⟠ Address | Added"
           : eventName === "SetPurpose"
           ? " ⟠ Address | New Purpose"
-          :"some unknown event headers " }</h2>
+          : eventName === "SigsRequired" 
+          ? " ⟠ Address | New Sigs Required"
+          : "some unknown event headers " }</h2>
       <List
         style={{maxWidth:600, margin:"auto",marginTop:32}}
         bordered

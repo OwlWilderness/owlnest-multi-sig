@@ -9,48 +9,80 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 
 contract OwlsNest {
 
-  //events
-  event SetPurpose(address sender, string purpose);
-  event Owner(address indexed owner,bool added);
+    //events
+    event SetPurpose(address indexed sender, string purpose);
+    event Owner(address indexed owner, bool added);
+    event SigsRequired(address indexed sender, uint newSigsRequired );
 
-  //variables
-  string public purpose = "Supporting Wilderness Conservation";
-  uint public signaturesRequired;
+    //variables
+    string public purpose = "Supporting Wilderness Conservation";
+    uint public signaturesRequired;
 
-  //mappings
-  mapping (address => bool) public owners;
+    //mappings
+    mapping (address => bool) public owners;
 
-  constructor(address[] memory _owners, uint _signaturesRequired)  {
-        _updateSigsRequired(_signaturesRequired);
-        for (uint i = 0; i < _owners.length; i++) {
-            address owner = _owners[i];
-            _addSigner(owner);
-        }
-  }
-  
-  function _addSigner(address newSigner) private {
-      require(newSigner != address(0), "_addSigner: zero address");
-      require(!owners[newSigner], "_addSigner: already an owner");
-      owners[newSigner] = true;
-      emit Owner(newSigner, owners[newSigner]);
-  }
+    constructor(address[] memory _owners, uint _signaturesRequired)  {
+            _updateSigsRequired(_signaturesRequired);
+            for (uint i = 0; i < _owners.length; i++) {
+                address owner = _owners[i];
+                _addSigner(owner);
+            }
+    }
+    
+//public functions
+    function addSigner(address newSigner) public onlySelf {
+        _addSigner(newSigner);
+    }
+
+    function removeSigner(address oldSigner) public onlySelf {
+        _removeSigner(oldSigner);
+    }
+    
+    function updateSigsRequired(uint newSigsRequired) public onlySelf {
+        _updateSigsRequired(newSigsRequired);
+    }
+
+    function setPurpose(string memory newPurpose) public {
+        purpose = newPurpose;
+        //console.log(msg.sender,"set purpose to",purpose);
+        emit SetPurpose(msg.sender, purpose);
+    }
+
+
+//private functions
+    function _removeSigner(address oldSigner) private nonZeroAddr(oldSigner) {
+        require(!owners[oldSigner], "_removeSigner: not a signer");
+        _updteSigner(oldSigner, false);
+    }
+
+
+    function _addSigner(address newSigner) private nonZeroAddr(newSigner) {
+        require(!owners[newSigner], "_addSigner: already an owner");
+        _updteSigner(newSigner, true);
+    }
+
+    function _updteSigner(address signer, bool add) private {
+      owners[signer] = add;
+      emit Owner(signer, owners[signer]);
+    }
 
   function _updateSigsRequired(uint _signaturesRequired) private {
       require(_signaturesRequired > 0, "constructor: must be non-zero sigs required");
       signaturesRequired = _signaturesRequired;
+      emit SigsRequired(msg.sender, _signaturesRequired);
   }
 
-  function setPurpose(string memory newPurpose) public {
-      purpose = newPurpose;
-      //console.log(msg.sender,"set purpose to",purpose);
-      emit SetPurpose(msg.sender, purpose);
-  }
 
   //modifiers
-  modifier onlySelf() {
-      require(msg.sender == address(this), "Not Self");
-      _;
-  }
+    modifier onlySelf() {
+        require(msg.sender == address(this), "Not Self");
+        _;
+    }
+
+    modifier nonZeroAddr(address _adr) {
+        require(_adr != address(0), "nonZeroAddr: zero address");
+        _;
+    }
 
   // to support receiving ETH by default
   receive() external payable {}

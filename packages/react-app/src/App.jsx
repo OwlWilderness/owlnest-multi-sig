@@ -264,6 +264,9 @@ function App(props) {
         <Menu.Item key="/">
           <Link to="/">Owners</Link>
         </Menu.Item>
+        <Menu.Item>
+          <Link to="/create">Create Transaction</Link>
+        </Menu.Item>
         <Menu.Item key="/events">
           <Link to="/events">Events</Link>
         </Menu.Item>
@@ -284,6 +287,9 @@ function App(props) {
             startBlock={1}
           />  
         </Route>
+        <Route exact path="/create">
+          no - thing
+        </Route>
         <Route exact path="/debug">
 
           <Contract
@@ -297,22 +303,30 @@ function App(props) {
           />
         </Route>
         <Route exact path="/events">
-          <Events
-            contracts={readContracts}
-            contractName= {contractName}
-            eventName="SetPurpose"
-            localProvider={localProvider}
-            mainnetProvider={mainnetProvider}
-            startBlock={1}
-          />         
-          <Events
-          contracts={readContracts}
-          contractName= {contractName}
-          eventName="Owner"
-          localProvider={localProvider}
-          mainnetProvider={mainnetProvider}
-          startBlock={1}
-        />  
+            <Events
+              contracts={readContracts}
+              contractName= {contractName}
+              eventName="Owner"
+              localProvider={localProvider}
+              mainnetProvider={mainnetProvider}
+              startBlock={1}
+            />  
+            <Events
+              contracts={readContracts}
+              contractName= {contractName}
+              eventName="SigsRequired"
+              localProvider={localProvider}
+              mainnetProvider={mainnetProvider}
+              startBlock={1}
+            />
+            <Events
+              contracts={readContracts}
+              contractName= {contractName}
+              eventName="SetPurpose"
+              localProvider={localProvider}
+              mainnetProvider={mainnetProvider}
+              startBlock={1}
+            />
         </Route>
       </Switch>
 
