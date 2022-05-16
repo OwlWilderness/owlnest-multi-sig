@@ -6,7 +6,7 @@ import {
   useContractReader,
   useGasPrice,
   useOnBlock,
-  useUserProviderAndSigner,
+  useUserProviderAndSigner
 } from "eth-hooks";
 import { useExchangeEthPrice } from "eth-hooks/dapps/dex";
 import React, { useCallback, useEffect, useState } from "react";
@@ -30,9 +30,9 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { Home, ExampleUI, Hints, Subgraph, Owners } from "./views";
-import { useStaticJsonRPC } from "./hooks";
-import CreateTransaction from "./views/CreateTransaction";
+import { CreateTransaction, Owners, Transactions } from "./views";
+import { useStaticJsonRPC, useUserProvider } from "./hooks";
+
 
 const { ethers } = require("ethers");
 /*
@@ -93,7 +93,7 @@ function App(props) {
     process.env.REACT_APP_PROVIDER ? process.env.REACT_APP_PROVIDER : targetNetwork.rpcUrl,
   ]);
   const mainnetProvider = useStaticJsonRPC(providers);
-
+  const userProvider = useUserProvider(injectedProvider, localProvider);
   if (DEBUG) console.log(`Using ${selectedNetwork} network`);
 
   // 🛰 providers
@@ -250,6 +250,10 @@ function App(props) {
 
   const contractName = "OwlsNest";
   const signaturesRequired = useContractReader(readContracts, contractName, "signaturesRequired");
+  const nonce = useContractReader(readContracts, contractName, "nonce");
+  // const poolServerUrl = " https://backend.multisig.lol:49899/"
+    const poolServerUrl = "http://localhost:49832/";
+
   return (
     <div className="App">
       {/* ✏️ Edit the header and change the title to your project name */}
@@ -266,8 +270,11 @@ function App(props) {
         <Menu.Item key="/">
           <Link to="/">Owners</Link>
         </Menu.Item>
-        <Menu.Item>
+        <Menu.Item key="/create">
           <Link to="/create">Create Transaction</Link>
+        </Menu.Item>
+        <Menu.Item key="/pool">
+          <Link to="/pool">Transaction Pool</Link>
         </Menu.Item>
         <Menu.Item key="/events">
           <Link to="/events">Events</Link>
@@ -275,6 +282,7 @@ function App(props) {
         <Menu.Item key="/debug">
           <Link to="/debug">Debug OwlsNest</Link>
         </Menu.Item>
+        
       </Menu>
 
       <Switch>
@@ -292,10 +300,10 @@ function App(props) {
         </Route>
         <Route exact path="/create">
          <CreateTransaction 
-             // poolServerUrl={poolServerUrl}
+              poolServerUrl={poolServerUrl}
               contractName={contractName}
               address={address}
-            //  userProvider={userProvider}
+              userProvider={userProvider}
               mainnetProvider={mainnetProvider}
               localProvider={localProvider}
               yourLocalBalance={yourLocalBalance}
@@ -303,9 +311,27 @@ function App(props) {
               tx={tx}
               writeContracts={writeContracts}
               readContracts={readContracts}
+              nonce={nonce}
             //  setRoute={setRoute}
          />
         </Route>
+        <Route path="/pool">
+            <Transactions
+              poolServerUrl={poolServerUrl}
+              contractName={contractName}
+              address={address}
+              userProvider={userProvider}
+              mainnetProvider={mainnetProvider}
+              localProvider={localProvider}
+              yourLocalBalance={yourLocalBalance}
+              price={price}
+              tx={tx}
+              writeContracts={writeContracts}
+              readContracts={readContracts}
+              blockExplorer={blockExplorer}
+              nonce={nonce}
+              signaturesRequired={signaturesRequired}
+            /></Route>        
         <Route exact path="/debug">
 
           <Contract

@@ -25,18 +25,19 @@ export default function CreateTransaction({
   yourLocalBalance,
   price,
   tx,
+  nonce,
   readContracts,
   writeContracts,
 }) {
   const history = useHistory();
 
     // keep track of a variable from the contract in the local React state:
-    const nonce = useContractReader(readContracts, contractName, "nonce")
-    console.log("# nonce:",nonce)
+    
+    //console.log("# nonce:",nonce)
 
   const calldataInputRef = useRef("0x");
 
-  console.log("price", price);
+  //console.log("price", price);
 
   const [customNonce, setCustomNonce] = useState();
   const [to, setTo] = useLocalStorage("to");

@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState, useRef } from "react";
 import { List, Select, Spin, Button, Input } from "antd";
 import { useEventListener } from "eth-hooks/events/useEventListener";
-import { Address, AddressInput } from "../components";
+import { Address, AddressInput, Events } from "../components";
 import {  useLocalStorage } from "../hooks";
 import { useContractReader } from "eth-hooks";
 import { useHistory } from "react-router-dom";
@@ -10,10 +10,10 @@ import { useHistory } from "react-router-dom";
 const axios = require('axios');
 const { Option } = Select;
 
-function Owners({ contracts, contractName, eventName, blockExplorer, localProvider, mainnetProvider, startBlock }) {
+function Owners({ contracts, contractName, eventName, signaturesRequired, blockExplorer, localProvider, mainnetProvider, startBlock }) {
   const history = useHistory();
   const events = useEventListener(contracts, contractName, eventName, localProvider, startBlock);
-  const signaturesRequired = useContractReader(contracts, contractName, "signaturesRequired");
+  
 
   const [to, setTo] = useLocalStorage("to");
   const [amount, setAmount] = useLocalStorage("amount","0");
