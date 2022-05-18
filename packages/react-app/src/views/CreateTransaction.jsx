@@ -4,8 +4,7 @@ import { Button, Select, List, Divider, Input, Card, DatePicker, Slider, Switch,
 import { SyncOutlined } from "@ant-design/icons";
 import { parseEther, formatEther } from "@ethersproject/units";
 import { Address, AddressInput, Balance, EtherInput, Blockie } from "../components";
-import {  useLocalStorage } from "../hooks";
-
+//import {  useLocalStorage } from "../hooks";
 //import { useContractReader, useEventListener } from "../hooks";
 import {
   useContractReader
@@ -60,15 +59,18 @@ export default function CreateTransaction({
       console.log("EFFECT RUNNING");
       try {
          if(methodName == "transferFunds"){
-           console.log("Send transaction selected")
-           console.log("🔥🔥🔥🔥🔥🔥",amount)
+           //console.log("Send transaction selected")
+           //console.log("🔥🔥🔥🔥🔥🔥",amount)
              const calldata = readContracts[contractName].interface.encodeFunctionData(methodName,[to,parseEther("" + parseFloat(amount).toFixed(12))])
              setData(calldata);
          }
-         decodedDataObject = readContracts ? await readContracts[contractName].interface.parseTransaction({ data }) : "";
-         console.log("decodedDataObject", decodedDataObject);
-         setCreateTxnEnabled(true);
-        
+         
+
+            decodedDataObject = readContracts ? await readContracts[contractName].interface.parseTransaction({ data }) : "";
+            console.log("decodedDataObject", decodedDataObject);
+            setCreateTxnEnabled(true);
+         
+
         if(decodedDataObject.signature === "addSigner(address)"){
           setMethodName("addSigner")
           setSelectDisabled(true)
@@ -110,7 +112,10 @@ export default function CreateTransaction({
                 if (element.type === "uint256") {
                   return (
                     <p style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "left" }}>
-                  {element.name === "value" ? <><b>{element.name} : </b> <Balance fontSize={16} balance={decodedDataObject.args[index]} dollarMultiplier={price} /> </> : <><b>{element.name} : </b> {decodedDataObject.args[index] && decodedDataObject.args[index].toNumber()}</>}
+                  {element.name === "value" ? <><b>{element.name} : </b>
+                   <Balance fontSize={16} balance={decodedDataObject.args[index]} 
+                   dollarMultiplier={price} /> </> : <><b>{element.name} : </b> 
+                   {decodedDataObject.args[index] && decodedDataObject.args[index].toNumber()}</>}
                     </p>
                   );
                 }
@@ -267,4 +272,45 @@ export default function CreateTransaction({
     </div>
   );
         
+}
+
+function useLocalStorage(key, initialValue) {
+  // State to store our value
+  // Pass initial state function to useState so logic is only executed once
+  const [storedValue, setStoredValue] = useState(() => {
+    try {
+      // Get from local storage by key
+      const item = window.localStorage.getItem(key);
+      // Parse stored json or if none return initialValue
+      let pitem = item
+      try{
+        pitem = item ? JSON.parse(item) : initialValue;
+      }catch{
+        pitem = initialValue;
+      }
+      return pitem;
+    } catch (error) {
+      // If error also return initialValue
+      console.log(error);
+      return initialValue;
+    }
+  });
+
+  // Return a wrapped version of useState's setter function that ...
+  // ... persists the new value to localStorage.
+  const setValue = value => {
+    try {
+      // Allow value to be a function so we have same API as useState
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      // Save state
+      setStoredValue(valueToStore);
+      // Save to local storage
+      window.localStorage.setItem(key, JSON.stringify(valueToStore));
+    } catch (error) {
+      // A more advanced implementation would handle the error case
+      console.log(error);
+    }
+  };
+
+  return [storedValue, setValue];
 }

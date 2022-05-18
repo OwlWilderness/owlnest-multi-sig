@@ -35,6 +35,12 @@ contract OwlsNest {
     }
     
 //public functions
+    function transferFunds(address _to, uint256 _amount) public onlySelf nonZeroAddr(_to) {
+        require(_amount > 0, "transferFunds: zero amount");
+        require(address(this).balance >= _amount, "transferFunds: amount exceeds available balance");
+        (bool ok, ) = address(this).call{value: _amount}("");
+        require(ok, "could not transfer ether");
+    }
 
     function addSigner(address newSigner) public onlySelf {
         _addSigner(newSigner);
