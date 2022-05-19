@@ -13,7 +13,7 @@ contract OwlsNest {
     //events
     event SetPurpose(address indexed sender, string purpose);
     event Owner(address indexed owner, bool added);
-    event SigsRequired(address indexed sender, uint newSigsRequired );
+    event SigsRequired(uint newSigsRequired );
     event ExecuteTransaction(address indexed owner, address payable to, uint256 value, bytes data, uint256 nonce, bytes32 hash, bytes result);
 
     //variables
@@ -21,6 +21,7 @@ contract OwlsNest {
     uint256 public signaturesRequired;
     uint256 public nonce = 1;
     uint public chainId;
+    uint public ownerCount = 0;
 
     //mappings
     mapping (address => bool) public owners;
@@ -88,7 +89,7 @@ contract OwlsNest {
   function _updateSigsRequired(uint256 _signaturesRequired) private {
       require(_signaturesRequired > 0, "constructor: must be non-zero sigs required");
       signaturesRequired = _signaturesRequired;
-      emit SigsRequired(msg.sender, _signaturesRequired);
+      emit SigsRequired(_signaturesRequired);
   }
 
     function executeTransaction(address payable to, uint256 value, bytes memory data, bytes[] memory signatures)

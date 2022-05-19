@@ -30,30 +30,41 @@ export default function Transactions({
   usePoller(() => {
     const getTransactions = async () => {
       if (DEBUG) console.log("🛰 Requesting Transaction List");
+      if (DEBUG) console.log("passed in Address", address)
+      if (DEBUG) console.log("Contract Address", (readContracts[contractName]?.address))
+      if (DEBUG) console.log("poolServerUrl", poolServerUrl)
+      if (DEBUG) console.log("localProvider._network.chainId", localProvider?._network.chainId)
       const res = await axios.get(
-        poolServerUrl + readContracts[contractName].address + "_" + localProvider._network.chainId,
+        poolServerUrl + readContracts[contractName]?.address + "_" + localProvider?._network.chainId,
       );
       const newTransactions = [];
       for (const i in res.data) {
-        // console.log("look through signatures of ",res.data[i])
+        if (DEBUG) console.log("look through signatures of ",res.data[i])
         const thisNonce = ethers.BigNumber.from(res.data[i].nonce);
+        if (DEBUG) console.log("nonce",thisNonce);
         if (thisNonce && nonce && thisNonce.gte(nonce)) {
           const validSignatures = [];
           for (const s in res.data[i].signatures) {
-             console.log("RECOVER:",res.data[i].signatures[s],res.data[i].hash)
+            if (DEBUG) console.log("RECOVER:",res.data[i].signatures[s],res.data[i].hash)
             const signer = await readContracts[contractName].recover(res.data[i].hash, res.data[i].signatures[s]);
+            if (DEBUG) console.log("signer", signer);
             const isOwner = await readContracts[contractName].owners(signer);
+            if (DEBUG) console.log("owner", isOwner);
             if (signer && isOwner) {
               validSignatures.push({ signer, signature: res.data[i].signatures[s] });
             }
           }
           const update = { ...res.data[i], validSignatures };
-          // console.log("update",update)
+          console.log("update",update)
           newTransactions.push(update);
+          if (DEBUG) console.log("newtransactions", newTransactions);
         }
       }
-      setTransactions(newTransactions);
-      if (DEBUG) console.log("Loaded",newTransactions.length)
+      if (DEBUG) console.log("New Transactions Before SET", newTransactions);
+      if (newTransactions && newTransactions.constructor === Array){
+        setTransactions(newTransactions);
+      }
+      if (DEBUG) console.log("Loaded", newTransactions.length);
     };
     if (readContracts) getTransactions();
   }, 3777);
@@ -93,7 +104,7 @@ export default function Transactions({
     return <Spin />;
   }
 
- // console.log("transactions",transactions)
+  if (DEBUG) console.log("transactions",transactions)
 
   return (
     <div style={{ maxWidth: 750, margin: "auto", marginTop: 32, marginBottom: 32 }}>
@@ -108,8 +119,9 @@ export default function Transactions({
           if (DEBUG) console.log("ITE88888M", item);
 
           const hasSigned = item.signers.indexOf(address) >= 0;
+          if (DEBUG) console.log("has signed", hasSigned);
           const hasEnoughSignatures = item.signatures.length <= signaturesRequired.toNumber();
-
+          if (DEBUG) console.log("has enough sigs", hasSigned);
           return (
             <TransactionListItem item={item} mainnetProvider={mainnetProvider} blockExplorer={blockExplorer} price={price} readContracts={readContracts} contractName={contractName}>
               <span>

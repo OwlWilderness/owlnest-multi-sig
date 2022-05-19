@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Button, List } from "antd";
 
 import { Address, Balance, Blockie, TransactionDetailsModal } from "../components";
-import { EllipsisOutlined } from "@ant-design/icons";
+import { ConsoleSqlOutlined, EllipsisOutlined } from "@ant-design/icons";
 import { parseEther, formatEther } from "@ethersproject/units";
 
 const TransactionListItem = function ({item, mainnetProvider, blockExplorer, price, readContracts, contractName, children}) {
@@ -22,6 +22,7 @@ const TransactionListItem = function ({item, mainnetProvider, blockExplorer, pri
   let txnData;
   try {
     txnData = readContracts[contractName].interface.parseTransaction(item);
+    if (DEBUG) console.log("txnData", txnData);
   } catch (error){
     console.log("ERROR", error)
   }
@@ -33,7 +34,10 @@ const TransactionListItem = function ({item, mainnetProvider, blockExplorer, pri
       mainnetProvider={mainnetProvider}
       price={price}
     />
-    {txnData && <List.Item key={item.hash} style={{ position: "relative" }}>
+
+    {
+    
+    txnData && <List.Item key={item.hash} style={{ position: "relative" }}>
       <div
         style={{
           position: "absolute",
@@ -51,8 +55,9 @@ const TransactionListItem = function ({item, mainnetProvider, blockExplorer, pri
           {txnData.functionFragment.name}&nbsp;
         </p>
         <p>
-          <b>Addressed to :&nbsp;</b>
-          {txnData.args[0]}
+          <b>Data : </b>
+        {txnData.args[0].toString()}
+         
         </p>
       </div>
       {<b style={{ padding: 16 }}>#{typeof(item.nonce)=== "number" ? item.nonce : item.nonce.toNumber()}</b>}
@@ -62,17 +67,19 @@ const TransactionListItem = function ({item, mainnetProvider, blockExplorer, pri
       <Address address={item.to} ensProvider={mainnetProvider} blockExplorer={blockExplorer} fontSize={16} />
       <Balance balance={item.value ? item.value : parseEther("" + parseFloat(item.amount).toFixed(12))} dollarMultiplier={price} />
       <>
+
         {
           children
         }
+
       </>
       <Button
         onClick={showModal}
       >
         <EllipsisOutlined />
       </Button>
-      
-    </List.Item>}
+    </List.Item>
+    }
     </>
 };
 export default TransactionListItem;

@@ -30,9 +30,9 @@ import externalContracts from "./contracts/external_contracts";
 // contracts
 import deployedContracts from "./contracts/hardhat_contracts.json";
 import { Transactor, Web3ModalSetup } from "./helpers";
-import { CreateTransaction, Owners, Transactions } from "./views";
+import { CreateTransaction, Owners, Transactions, FrontPage } from "./views";
 import { useStaticJsonRPC, useUserProvider } from "./hooks";
-
+import { useEventListener } from "eth-hooks/events/useEventListener";
 
 const { ethers } = require("ethers");
 /*
@@ -253,6 +253,11 @@ function App(props) {
   const nonce = useContractReader(readContracts, contractName, "nonce");
   // const poolServerUrl = " https://backend.multisig.lol:49899/"
     const poolServerUrl = "http://localhost:49832/";
+  
+   //📟 Listen for broadcast events
+   const executeTransactionEvents = useEventListener(readContracts, contractName, "ExecuteTransaction", localProvider, 1);
+   if(DEBUG) console.log("📟 executeTransactionEvents:",executeTransactionEvents)
+ 
 
   return (
     <div className="App">
@@ -270,6 +275,9 @@ function App(props) {
         <Menu.Item key="/">
           <Link to="/">Owners</Link>
         </Menu.Item>
+        <Menu.Item key="/multisig">
+          <Link to="/multisig">MultiSig</Link>
+        </Menu.Item>        
         <Menu.Item key="/create">
           <Link to="/create">Create Transaction</Link>
         </Menu.Item>
@@ -315,6 +323,17 @@ function App(props) {
             //  setRoute={setRoute}
          />
         </Route>
+        <Route exact path="/multisig">
+            <FrontPage
+              executeTransactionEvents={executeTransactionEvents}
+              contractName={contractName}
+              localProvider={localProvider}
+              readContracts={readContracts}
+              price={price}
+              mainnetProvider={mainnetProvider}
+              blockExplorer={blockExplorer}
+            />
+          </Route>        
         <Route path="/pool">
             <Transactions
               poolServerUrl={poolServerUrl}

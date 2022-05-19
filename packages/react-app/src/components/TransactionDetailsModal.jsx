@@ -3,6 +3,8 @@ import { Modal } from "antd";
 import Address from "./Address";
 import Balance from "./Balance";
 const TransactionDetailsModal = function ({visible, handleOk, mainnetProvider, price, txnInfo = null}) {
+  const DEBUG = false;
+  if (DEBUG) console.log("in txn details modal", txnInfo);
   return (
     <Modal
       title="Transaction Details"

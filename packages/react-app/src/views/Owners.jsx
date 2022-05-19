@@ -13,7 +13,7 @@ const { Option } = Select;
 function Owners({ contracts, contractName, eventName, signaturesRequired, blockExplorer, localProvider, mainnetProvider, startBlock }) {
   const history = useHistory();
   const events = useEventListener(contracts, contractName, eventName, localProvider, startBlock);
-  
+  console.log("events", events);
 
   const [to, setTo] = useLocalStorage("to");
   const [amount, setAmount] = useLocalStorage("amount","0");
