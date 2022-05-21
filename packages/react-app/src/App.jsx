@@ -253,11 +253,14 @@ function App(props) {
   const nonce = useContractReader(readContracts, contractName, "nonce");
   // const poolServerUrl = " https://backend.multisig.lol:49899/"
     const poolServerUrl = "http://localhost:49832/";
-  
-   //📟 Listen for broadcast events
-   const executeTransactionEvents = useEventListener(readContracts, contractName, "ExecuteTransaction", localProvider, 1);
-   if(DEBUG) console.log("📟 executeTransactionEvents:",executeTransactionEvents)
- 
+     //📟 Listen for broadcast events
+     const executeTransactionEvents = useEventListener(readContracts, contractName, "ExecuteTransaction", localProvider, 1);
+    if (DEBUG) console.log("📟 executeTransactionEvents:",executeTransactionEvents)
+
+    const ownerEvents = useEventListener(readContracts, contractName, "Owner", localProvider, 3);
+console.log("📟 owner events:",ownerEvents);
+
+
 
   return (
     <div className="App">
@@ -296,9 +299,9 @@ function App(props) {
       <Switch>
         <Route exact path="/">
         <Owners
-            contracts={readContracts}
+            readContracts={readContracts}
             contractName= {contractName}
-            eventName="Owner"
+            ownerEvents={ownerEvents}
             blockExplorer={blockExplorer}
             localProvider={localProvider}
             mainnetProvider={mainnetProvider}
@@ -364,6 +367,7 @@ function App(props) {
           />
         </Route>
         <Route exact path="/events">
+        
             <Events
               contracts={readContracts}
               contractName= {contractName}
@@ -375,19 +379,12 @@ function App(props) {
             <Events
               contracts={readContracts}
               contractName= {contractName}
-              eventName="SigsRequired"
+              eventName="ExecuteTransaction"
               localProvider={localProvider}
               mainnetProvider={mainnetProvider}
               startBlock={1}
-            />
-            <Events
-              contracts={readContracts}
-              contractName= {contractName}
-              eventName="SetPurpose"
-              localProvider={localProvider}
-              mainnetProvider={mainnetProvider}
-              startBlock={1}
-            />
+            />  
+
         </Route>
       </Switch>
 

@@ -21,12 +21,27 @@ export default function FrontPage({
   mainnetProvider,
   blockExplorer,
 }) {
-  const [methodName, setMethodName] = useLocalStorage("addSigner");
+  //const [methodName, setMethodName] = useLocalStorage("addSigner");
+  console.log("events", executeTransactionEvents);
+  if(!readContracts || !readContracts[contractName]){
+    return (<List
+      bordered
+      dataSource={executeTransactionEvents}
+      renderItem={item => {
+        return (
+          <>
+              <TransactionListItem item={item} mainnetProvider={mainnetProvider} blockExplorer={blockExplorer} price={price} readContracts={readContracts} contractName={contractName}/>
+          </>
+        );
+      }}
+    />);
+  }
+
   return (
     <div style={{ padding: 32, maxWidth: 750, margin: "auto" }}>
       <div style={{ paddingBottom: 32 }}>
         <div>
-          <Balance
+        <Balance
             address={readContracts ? readContracts[contractName].address : readContracts}
             provider={localProvider}
             dollarMultiplier={price}
@@ -34,7 +49,7 @@ export default function FrontPage({
           />
         </div>
         <div>
-          <QR
+        <QR
             value={readContracts ? readContracts[contractName].address : ""}
             size={180}
             level="H"
@@ -44,7 +59,7 @@ export default function FrontPage({
           />
         </div>
         <div>
-          <Address
+         <Address
             address={readContracts ? readContracts[contractName].address : readContracts}
             ensProvider={mainnetProvider}
             blockExplorer={blockExplorer}
@@ -56,14 +71,14 @@ export default function FrontPage({
         bordered
         dataSource={executeTransactionEvents}
         renderItem={item => {
-
           return (
             <>
-                <TransactionListItem item={item} mainnetProvider={mainnetProvider} blockExplorer={blockExplorer} price={price} readContracts={readContracts} contractName={contractName}/>
+                <TransactionListItem item={item.hash} mainnetProvider={mainnetProvider} blockExplorer={blockExplorer} price={price} readContracts={readContracts} contractName={contractName}/>
             </>
           );
         }}
       />
     </div>
   );
+
 }

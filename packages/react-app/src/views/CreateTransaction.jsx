@@ -4,11 +4,7 @@ import { Button, Select, List, Divider, Input, Card, DatePicker, Slider, Switch,
 import { SyncOutlined } from "@ant-design/icons";
 import { parseEther, formatEther } from "@ethersproject/units";
 import { Address, AddressInput, Balance, EtherInput, Blockie } from "../components";
-//import {  useLocalStorage } from "../hooks";
-//import { useContractReader, useEventListener } from "../hooks";
-import {
-  useContractReader
-} from "eth-hooks";
+import { useContractReader } from "eth-hooks";
 const { Option } = Select;
 
 const axios = require("axios");
@@ -24,19 +20,18 @@ export default function CreateTransaction({
   yourLocalBalance,
   price,
   tx,
-  nonce,
   readContracts,
   writeContracts,
 }) {
   const history = useHistory();
 
-    // keep track of a variable from the contract in the local React state:
-    
-    //console.log("# nonce:",nonce)
-
+  // keep track of a variable from the contract in the local React state:
+  const nonce = useContractReader(readContracts, contractName, "nonce");
   const calldataInputRef = useRef("0x");
 
-  //console.log("price", price);
+  console.log("🤗 nonce:", nonce);
+
+  console.log("price", price);
 
   const [customNonce, setCustomNonce] = useState();
   const [to, setTo] = useLocalStorage("to");
@@ -59,29 +54,21 @@ export default function CreateTransaction({
       console.log("EFFECT RUNNING");
       try {
          if(methodName == "transferFunds"){
-           //console.log("Send transaction selected")
-           //console.log("🔥🔥🔥🔥🔥🔥",amount)
-             const calldata = readContracts[contractName].interface.encodeFunctionData(methodName,[to,parseEther("" + parseFloat(amount).toFixed(12))])
+           console.log("Send transaction selected")
+           console.log("🔥🔥🔥🔥🔥🔥",amount)
+             const calldata = readContracts[contractName].interface.encodeFunctionData("transferFunds",[to,parseEther("" + parseFloat(amount).toFixed(12))])
              setData(calldata);
          }
-         
-
-            decodedDataObject = readContracts ? await readContracts[contractName].interface.parseTransaction({ data }) : "";
-            console.log("decodedDataObject", decodedDataObject);
-            setCreateTxnEnabled(true);
-         
-
-        if(decodedDataObject.signature === "addSigner(address)"){
+         decodedDataObject = readContracts ? await readContracts[contractName].interface.parseTransaction({ data }) : "";
+         console.log("decodedDataObject", decodedDataObject);
+         setCreateTxnEnabled(true);
+        if(decodedDataObject.signature === "addSigner(address,uint256)"){
           setMethodName("addSigner")
           setSelectDisabled(true)
-        } else if (decodedDataObject.signature === "removeSigner(address)"){
+        } else if (decodedDataObject.signature === "removeSigner(address,uint256)"){
           setMethodName("removeSigner")
           setSelectDisabled(true)
-        } else if (decodedDataObject.signature === "updateSigsRequired(uint256)"){
-          setMethodName("updateSigsRequired")
-          setSelectDisabled(true)
-        }        
-        
+        }
         decodedData = (
           <div>
             <div
@@ -112,10 +99,7 @@ export default function CreateTransaction({
                 if (element.type === "uint256") {
                   return (
                     <p style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "left" }}>
-                  {element.name === "value" ? <><b>{element.name} : </b>
-                   <Balance fontSize={16} balance={decodedDataObject.args[index]} 
-                   dollarMultiplier={price} /> </> : <><b>{element.name} : </b> 
-                   {decodedDataObject.args[index] && decodedDataObject.args[index].toNumber()}</>}
+                  {element.name === "value" ? <><b>{element.name} : </b> <Balance fontSize={16} balance={decodedDataObject.args[index]} dollarMultiplier={price} /> </> : <><b>{element.name} : </b> {decodedDataObject.args[index] && decodedDataObject.args[index].toString()}</>}
                     </p>
                   );
                 }
@@ -156,9 +140,9 @@ export default function CreateTransaction({
 
   return (
     <div>
-        {/*
-          ⚙️ Here is an example UI that displays and sets the purpose in your smart contract:
-        */}
+      {/*
+        ⚙️ Here is an example UI that displays and sets the purpose in your smart contract:
+      */}
       <div style={{ border: "1px solid #cccccc", padding: 16, width: 400, margin: "auto", marginTop: 64 }}>
         <div style={{ margin: 8 }}>
           <div style={inputStyle}>
@@ -175,7 +159,6 @@ export default function CreateTransaction({
             <Option key="transferFunds">transferFunds()</Option>
             <Option disabled={true} key="addSigner">addSigner()</Option>
             <Option disabled={true} key="removeSigner">removeSigner()</Option>
-            <Option disabled={true} key="updateSigsRequired">updateSigsRequired()</Option>
           </Select>
         </div>
           <div style={inputStyle}>
@@ -230,7 +213,7 @@ export default function CreateTransaction({
               const recover = await readContracts[contractName].recover(newHash, signature);
               console.log("recover", recover);
 
-              const isOwner = await readContracts[contractName].owners(recover);
+              const isOwner = await readContracts[contractName].isOwner(recover);
               console.log("isOwner", isOwner);
 
               if (isOwner) {
@@ -271,7 +254,6 @@ export default function CreateTransaction({
       </div>
     </div>
   );
-        
 }
 
 function useLocalStorage(key, initialValue) {
@@ -282,13 +264,7 @@ function useLocalStorage(key, initialValue) {
       // Get from local storage by key
       const item = window.localStorage.getItem(key);
       // Parse stored json or if none return initialValue
-      let pitem = item
-      try{
-        pitem = item ? JSON.parse(item) : initialValue;
-      }catch{
-        pitem = initialValue;
-      }
-      return pitem;
+      return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       // If error also return initialValue
       console.log(error);

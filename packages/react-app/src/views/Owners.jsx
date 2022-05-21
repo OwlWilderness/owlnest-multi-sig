@@ -1,19 +1,17 @@
-import React, { useCallback, useEffect, useState, useRef } from "react";
-import { List, Select, Spin, Button, Input } from "antd";
-import { useEventListener } from "eth-hooks/events/useEventListener";
-import { Address, AddressInput, Events } from "../components";
-import {  useLocalStorage } from "../hooks";
-import { useContractReader } from "eth-hooks";
+import React, { useCallback, useEffect, useState } from "react";
 import { useHistory } from "react-router-dom";
-
-//import { Select, Button, List, Divider, Input, Card, DatePicker, Slider, Switch, Progress, Spin } from "antd";
+import { Select, Button, List, Divider, Input, Card, DatePicker, Slider, Switch, Progress, Spin } from "antd";
+import { SyncOutlined } from '@ant-design/icons';
+import { Address, AddressInput, Balance, Blockie } from "../components";
+import { parseEther, formatEther } from "@ethersproject/units";
+import { ethers } from "ethers";
+import { useContractReader, useEventListener, useLocalStorage } from "../hooks";
 const axios = require('axios');
 const { Option } = Select;
 
-function Owners({ contracts, contractName, eventName, signaturesRequired, blockExplorer, localProvider, mainnetProvider, startBlock }) {
+export default function Owners({contractName, ownerEvents, signaturesRequired, address, nonce, userProvider, mainnetProvider, localProvider, yourLocalBalance, price, tx, readContracts, writeContracts, blockExplorer }) {
+
   const history = useHistory();
-  const events = useEventListener(contracts, contractName, eventName, localProvider, startBlock);
-  console.log("events", events);
 
   const [to, setTo] = useLocalStorage("to");
   const [amount, setAmount] = useLocalStorage("amount","0");
@@ -23,28 +21,30 @@ function Owners({ contracts, contractName, eventName, signaturesRequired, blockE
   const [data, setData] = useLocalStorage("data","0x");
 
   return (
-    <div style={{ width: 600, margin: "auto", marginTop: 32, paddingBottom: 32 }}>
-       <h2 style={{marginTop:32}}>Signatures Required: {signaturesRequired?signaturesRequired.toNumber():<Spin></Spin>}</h2>
-    <h2> Owners </h2>
-    <List
+    <div>
+      <h2 style={{marginTop:32}}>Signatures Required: {signaturesRequired?signaturesRequired.toNumber():<Spin></Spin>}</h2>
+      <List
         style={{maxWidth:600,margin:"auto",marginTop:32}}
         bordered
-      dataSource={events}
-      renderItem={item => {
-        return (
-          <List.Item key={item.blockNumber + "_" + item.args.sender + "_" + item.args[1].toString()}>
-            <Address address={item.args[0]} ensProvider={mainnetProvider} size="long" fontSize={16} />
+        dataSource={ownerEvents}
+        renderItem={(item) => {
+          return (
+            <List.Item key={"owner_"+item.args[0]}>
+            <Address
+              address={item.args[0]}
+              ensProvider={mainnetProvider}
+              blockExplorer={blockExplorer}
+              fontSize={32}
+            />
             <div style={{padding:16}}>
               {item.args[1]?"👍":"👎"}
             </div>
-          </List.Item>
-        );
-      }}
-    />
+            </List.Item>
+          )
+        }}
+      />
 
-{/**select transaction to execute */}
       <div style={{border:"1px solid #cccccc", padding:16, width:600, margin:"auto",marginTop:64}}>
-      <h2> Update Signers </h2>
         <div style={{margin:8,padding:8}}>
           <Select value={methodName} style={{ width: "100%" }} onChange={ setMethodName }>
             <Option key="addSigner">addSigner()</Option>
@@ -59,27 +59,8 @@ function Owners({ contracts, contractName, eventName, signaturesRequired, blockE
             value={newOwner}
             onChange={setNewOwner}
           />
-        </div>        
+        </div>
         <div style={{margin:8,padding:8}}>
-          <Button onClick={()=>{
-            //console.log("METHOD",setMethodName)
-            let calldata = contracts[contractName].interface.encodeFunctionData(methodName,[newOwner])
-            //console.log("calldata",calldata)
-            setData(calldata)
-            setAmount("0")
-            setTo(contracts[contractName].address)
-            setTimeout(()=>{
-              history.push('/create')
-            },777)
-          }}>
-            Create 'Modify Signer' Tx
-          </Button>        
-          </div>
-      </div>
-{/**update required signatures */}
-<div style={{border:"1px solid #cccccc", padding:16, width:600, margin:"auto",marginTop:64}}>
-      <h2> Update Requried Signatures </h2>
-      <div style={{margin:8,padding:8}}>
           <Input
             ensProvider={mainnetProvider}
             placeholder="new # of signatures required"
@@ -89,23 +70,20 @@ function Owners({ contracts, contractName, eventName, signaturesRequired, blockE
         </div>
         <div style={{margin:8,padding:8}}>
           <Button onClick={()=>{
-            //console.log("METHOD",setMethodName)
-            let calldata = contracts[contractName].interface.encodeFunctionData("updateSigsRequired",[newSignaturesRequired])
-            //console.log("calldata",calldata)
+            console.log("METHOD",setMethodName)
+            let calldata = readContracts[contractName].interface.encodeFunctionData(methodName,[newOwner,newSignaturesRequired])
+            console.log("calldata",calldata)
             setData(calldata)
             setAmount("0")
-            setTo(contracts[contractName].address)
+            setTo(readContracts[contractName].address)
             setTimeout(()=>{
               history.push('/create')
             },777)
           }}>
-           Create 'Update Signatures Requried' Tx
-          </Button>        
-          </div>
+          Create Tx
+          </Button>
+        </div>
+      </div>
     </div>
-  </div>
-);
+  );
 }
-
-export default Owners;
-

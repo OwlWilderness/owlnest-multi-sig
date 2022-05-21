@@ -48,7 +48,7 @@ export default function Transactions({
             if (DEBUG) console.log("RECOVER:",res.data[i].signatures[s],res.data[i].hash)
             const signer = await readContracts[contractName].recover(res.data[i].hash, res.data[i].signatures[s]);
             if (DEBUG) console.log("signer", signer);
-            const isOwner = await readContracts[contractName].owners(signer);
+            const isOwner = await readContracts[contractName].isOwner(signer);
             if (DEBUG) console.log("owner", isOwner);
             if (signer && isOwner) {
               validSignatures.push({ signer, signature: res.data[i].signatures[s] });
@@ -145,7 +145,7 @@ export default function Transactions({
                   const recover = await readContracts[contractName].recover(newHash, signature);
                   if (DEBUG) console.log("recover--->", recover);
 
-                  const isOwner = await readContracts[contractName].owners(recover);
+                  const isOwner = await readContracts[contractName].isOwner(recover);
                   if (DEBUG)  console.log("isOwner", isOwner);
 
                   if (isOwner) {

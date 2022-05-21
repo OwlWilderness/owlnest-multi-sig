@@ -33,19 +33,48 @@ export default function Events({ contracts, contractName, eventName, localProvid
           ? " ⟠ Address | New Purpose"
           : eventName === "SigsRequired" 
           ? " ⟠ Address | New Sigs Required"
+          : eventName === "ExecuteTransaction"
+          ? "exe txn headers"
           : "some unknown event headers " }</h2>
       <List
         style={{maxWidth:600, margin:"auto",marginTop:32}}
         bordered
         dataSource={events}
         renderItem={item => {
-          return (
-            <List.Item key={item.blockNumber + "_" + item.args.sender + "_" + item.args[1].toString()}>
-              <Address address={item.args[0]} ensProvider={mainnetProvider} size="long" fontSize={16} />
-              {item.args[1].toString()}
-            </List.Item>
-          );
-        }}
+          console.log("eventname", eventName);
+            if (eventName === "Owner"){
+            return (
+              <List.Item key={item.blockNumber + "_" + item.args.sender + "_" + item.args[1]}>
+                <Address address={item.args[0]} ensProvider={mainnetProvider} size="long" fontSize={16} />
+                {item.args[1].toString()}
+              </List.Item>
+              );
+            } 
+            if (eventName ==="SigsRequired") {
+              return (
+                <List.Item key={item.blockNumber + "_" + item.args.sender + "_" + item.args[0].toString()}>
+                New Signatures Required Count: {item.args[0].toString()}
+              </List.Item>
+              );
+            }
+            if (eventName ==="SetPurpose") {
+              return (
+                <List.Item key={item.blockNumber + "_" + item.args.sender + "_" + item.args[1].toString()}>
+                <Address address={item.args[0]} ensProvider={mainnetProvider} size="long" fontSize={16} />
+                {item.args[1].toString()}
+              </List.Item>
+              );
+            }
+            if (eventName ==="ExecuteTransaction") {
+              return (
+                <List.Item key={item.blockNumber + "_" + item.args.sender + "_" + item.args[1].toString()}>
+                <Address address={item.args[0]} ensProvider={mainnetProvider} size="long" fontSize={16} />
+                {item.args[1].toString()}
+              </List.Item>
+              );
+            }            
+          }
+        }
       />
     </div>
   );

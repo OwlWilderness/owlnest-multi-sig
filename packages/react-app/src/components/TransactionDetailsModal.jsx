@@ -37,7 +37,7 @@ const TransactionDetailsModal = function ({visible, handleOk, mainnetProvider, p
             if (element.type === "uint256") {
               return (
                 <p key={element.name}>
-                  {element.name === "value" ? <><b>{element.name} : </b> <Balance fontSize={16} balance={txnInfo.args[index]} dollarMultiplier={price} /> </> : <><b>{element.name} : </b> {txnInfo.args[index] && txnInfo.args[index].toNumber()}</>}
+                  {element.name === "value" ? <><b>{element.name} : </b> <Balance fontSize={16} balance={txnInfo.args[index]} dollarMultiplier={price} /> </> : <><b>{element.name} : </b> {txnInfo.args[index] && txnInfo.args[index].toString()}</>}
                 </p>
               );
             }

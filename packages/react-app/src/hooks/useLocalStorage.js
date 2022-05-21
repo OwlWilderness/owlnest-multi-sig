@@ -7,6 +7,7 @@ export default function useLocalStorage(key, initialValue, ttl) {
     try {
       // Get from local storage by key
       const item = window.localStorage.getItem(key);
+      console.log("item in local storage:", item, "key", key)
       const parsedItem = item ? JSON.parse(item) : initialValue;
 
       if (typeof parsedItem === "object" && parsedItem !== null && "expiry" in parsedItem && "value" in parsedItem) {

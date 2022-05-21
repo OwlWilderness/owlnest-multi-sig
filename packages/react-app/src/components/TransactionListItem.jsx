@@ -17,10 +17,11 @@ const TransactionListItem = function ({item, mainnetProvider, blockExplorer, pri
     setIsModalVisible(false);
   };
 
-  const DEBUG = false;
+  const DEBUG = true;
   if (DEBUG) console.log("🔥🔥🔥🔥", item)
   let txnData;
   try {
+    
     txnData = readContracts[contractName].interface.parseTransaction(item);
     if (DEBUG) console.log("txnData", txnData);
   } catch (error){
