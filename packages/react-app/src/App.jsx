@@ -55,7 +55,7 @@ const { ethers } = require("ethers");
 */
 
 /// 📡 What chain are your contracts deployed to?
-const initialNetwork = NETWORKS.localhost; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
+const initialNetwork = NETWORKS.rinkeby; // <------- select your target frontend network (localhost, rinkeby, xdai, mainnet)
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -251,8 +251,9 @@ function App(props) {
   const contractName = "OwlsNest";
   const signaturesRequired = useContractReader(readContracts, contractName, "signaturesRequired");
   const nonce = useContractReader(readContracts, contractName, "nonce");
-  // const poolServerUrl = " https://backend.multisig.lol:49899/"
-    const poolServerUrl = "http://localhost:49832/";
+   const poolServerUrl = "https://backend.multisig.lol:49899/"
+  
+    //const poolServerUrl = "http://localhost:49832/";
   
    //📟 Listen for broadcast events
    const executeTransactionEvents = useEventListener(readContracts, contractName, "ExecuteTransaction", localProvider, 1);
@@ -380,14 +381,7 @@ function App(props) {
               mainnetProvider={mainnetProvider}
               startBlock={1}
             />
-            <Events
-              contracts={readContracts}
-              contractName= {contractName}
-              eventName="SetPurpose"
-              localProvider={localProvider}
-              mainnetProvider={mainnetProvider}
-              startBlock={1}
-            />
+
         </Route>
       </Switch>
 

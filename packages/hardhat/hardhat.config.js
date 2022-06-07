@@ -30,7 +30,7 @@ const ETHERSCAN_KEY = process.env.ETHERSCAN_KEY;
 //
 // Select the network you want to deploy to here:
 //
-const defaultNetwork = "localhost";
+const defaultNetwork = "rinkeby";
 
 const mainnetGwei = 21;
 

@@ -65,7 +65,7 @@ const TransactionListItem = function ({item, mainnetProvider, blockExplorer, pri
         <Blockie size={4} scale={8} address={item.hash} /> {item.hash.substr(0, 6)}
       </span>
       <Address address={item.to} ensProvider={mainnetProvider} blockExplorer={blockExplorer} fontSize={16} />
-      <Balance balance={item.value ? item.value : parseEther("" + parseFloat(item.amount).toFixed(12))} dollarMultiplier={price} />
+      <Balance balance={item.value ? item.value : parseEther("" + parseFloat(item.amount).toFixed(12))} price={price} />
       <>
 
         {

@@ -20,7 +20,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   await deploy("OwlsNest", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: [chainId, ["0x6BD4B849220EF05b0320c086213aa102D96Bd003"], 1 ],
+    args: [chainId, ["0x1A4c2B35c9B4CC9F9A833A43dBe3A78FDB80Bb54","0x97843608a00e2bbc75ab0c1911387e002565dede"], 1 ],
     log: true,
     waitConfirmations: 5,
   });
