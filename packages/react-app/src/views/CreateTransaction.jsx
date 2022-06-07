@@ -10,7 +10,7 @@ import {
   useContractReader
 } from "eth-hooks";
 const { Option } = Select;
-
+const { utils } = require("ethers");
 const axios = require("axios");
 
 export default function CreateTransaction({
@@ -109,16 +109,27 @@ export default function CreateTransaction({
                     </div>
                   );
                 }
-                if (element.type === "uint256") {
+                if (element.type === "uint256" && element.name != "newSigsRequired") {
                   return (
                     <p style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "left" }}>
                   {element.name === "value" ? <><b>{element.name} : </b>
                    <Balance fontSize={16} balance={decodedDataObject.args[index]} 
-                   dollarMultiplier={price} /> </> : <><b>{element.name} : </b> 
-                   {decodedDataObject.args[index] && decodedDataObject.args[index].toNumber()}</>}
+                   price={price} /> </> : <><b>{element.name} : </b> 
+                   {decodedDataObject.args[index] && parseFloat(utils.formatEther(decodedDataObject.args[index])).toFixed(14)}
+                   </>}
                     </p>
                   );
                 }
+                if (element.type === "uint256" && element.name === "newSigsRequired") {
+                  return (
+                    <div
+                      style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "left" }}
+                    >
+                      <b>{element.name} :&nbsp;</b>
+                      {decodedDataObject.args[index] && decodedDataObject.args[index].toNumber()}
+                    </div>
+                  );
+                }                
               })}
           </div>
         );

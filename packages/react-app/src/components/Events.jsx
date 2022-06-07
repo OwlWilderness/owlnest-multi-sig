@@ -34,16 +34,20 @@ export default function Events({ contracts, contractName, eventName, localProvid
           : eventName === "SigsRequired" 
           ? " ⟠ Address | New Sigs Required"
           : "some unknown event headers " }</h2>
+      
       <List
         style={{maxWidth:600, margin:"auto",marginTop:32}}
         bordered
         dataSource={events}
         renderItem={item => {
+
           return (
-            <List.Item key={item.blockNumber + "_" + item.args.sender + "_" + item.args[1].toString()}>
-              <Address address={item.args[0]} ensProvider={mainnetProvider} size="long" fontSize={16} />
+            <List.Item key={item.blockNumber + "_" + item.args[0] + "_" + item.args[1].toString()}>
+            <Address address={item.args[0]} ensProvider={mainnetProvider} size="long" fontSize={16} />
+            <div style={{padding:16}}>
               {item.args[1].toString()}
-            </List.Item>
+            </div>
+          </List.Item>
           );
         }}
       />

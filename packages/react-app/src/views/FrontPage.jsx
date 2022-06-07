@@ -21,31 +21,33 @@ export default function FrontPage({
   mainnetProvider,
   blockExplorer,
 }) {
-  const [methodName, setMethodName] = useLocalStorage("addSigner");
+  //const [methodName, setMethodName] = useLocalStorage("addSigner");
+
   return (
     <div style={{ padding: 32, maxWidth: 750, margin: "auto" }}>
       <div style={{ paddingBottom: 32 }}>
         <div>
+        
           <Balance
             address={readContracts ? readContracts[contractName].address : readContracts}
             provider={localProvider}
-            dollarMultiplier={price}
+            price={price}
             fontSize={64}
           />
         </div>
         <div>
-          <QR
-            value={readContracts ? readContracts[contractName].address : ""}
+         {/* <QR
+            value={readContracts && readContracts[contractName]  ? readContracts[contractName].address : ""}
             size={180}
             level="H"
             includeMargin
             renderAs="svg"
             imageSettings={{ excavate: false }}
-          />
+  />*/}
         </div>
         <div>
-          <Address
-            address={readContracts ? readContracts[contractName].address : readContracts}
+           <Address
+            address={readContracts && readContracts[contractName]  ? readContracts[contractName].address : readContracts}
             ensProvider={mainnetProvider}
             blockExplorer={blockExplorer}
             fontSize={32}
@@ -56,7 +58,6 @@ export default function FrontPage({
         bordered
         dataSource={executeTransactionEvents}
         renderItem={item => {
-
           return (
             <>
                 <TransactionListItem item={item} mainnetProvider={mainnetProvider} blockExplorer={blockExplorer} price={price} readContracts={readContracts} contractName={contractName}/>
