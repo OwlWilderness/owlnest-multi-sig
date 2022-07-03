@@ -299,7 +299,7 @@ module.exports = {
     path: "../react-app/src/contracts/ABI",
     runOnCompile: true,
     clear: true,
-    flat: true,
+    flat: false,
     only: [],
     spacing: 2,
     pretty: false,
