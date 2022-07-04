@@ -46,6 +46,8 @@ Update `hardhat-config.js` set `flat: false`
   
   
 ###  Mainnet Polygon LINK token
+[source](https://docs.polygon.technology/docs/develop/oracles/chainlink/#:~:text=Chainlink%20enables%20your%20contracts%20to,your%20contract%20to%20consume%20it.)
+  
 To get mainnet Polygon LINK token from the Ethereum mainnet, you must follow a 2 step process.
 
 - Bridge your LINK using the Plasma or PoS bridge.
