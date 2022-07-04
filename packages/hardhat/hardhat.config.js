@@ -29,7 +29,7 @@ const { isAddress, getAddress, formatUnits, parseUnits } = utils;
 //
 const defaultNetwork = "localhost";
 
-const mainnetGwei = 21;
+const mainnetGwei = 180;
 
 function mnemonic() {
   try {
@@ -131,9 +131,9 @@ module.exports = {
       },
     },
     polygon: {
-      url: "https://polygon-rpc.com",
+      url: "https://polygon-mainnet.infura.io/v3/58daabf0f6e3462aa9aef8ccb9f4ead4",// "https://polygon-rpc.com",
       // url: "https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXx/polygon/mainnet", // <---- YOUR MORALIS ID! (not limited to infura)
-      gasPrice: 3200000000,
+      gasPrice: 48000000000,
       accounts: {
         mnemonic: mnemonic(),
       },
@@ -141,7 +141,7 @@ module.exports = {
     mumbai: {
       url: "https://rpc-mumbai.maticvigil.com",
       // url: "https://speedy-nodes-nyc.moralis.io/XXXXXXXXXXXXXXXXXXXXXXX/polygon/mumbai", // <---- YOUR MORALIS ID! (not limited to infura)
-      gasPrice: 3200000000,
+      gasPrice: 7200000000,
       accounts: {
         mnemonic: mnemonic(),
       },
@@ -291,7 +291,8 @@ module.exports = {
   },
   etherscan: {
     apiKey: {
-      mainnet: "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW",
+      mainnet: "93J3DMA1DJ5JN1BTWVR4CUGVAWPZWXAGF7",
+      polygon: "XWM511WRMX9IIMAGJVTBYUVBUAEIMDU2H3"
       // add other network's API key here
     },
   },

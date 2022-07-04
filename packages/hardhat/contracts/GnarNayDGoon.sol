@@ -55,7 +55,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     uint32 numWords =  1;
 
     uint256[] public s_randomWords;
-    uint256 public s_randomMod2  = 0;
+    uint256 public s_randomMod2  = 1;
     uint256 public s_requestId;
 
     string public lastWvrp = "goon";
@@ -76,7 +76,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     uint public /*immutable*/ interval;
     uint public lastTimeStamp;
     int256 public currentPrice;
-
+    bool public enableVRF = false;
 
     //reference to chainlink aggragator and random number contract;
     AggregatorV3Interface public priceFeed;
@@ -86,6 +86,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     Counters.Counter private _tokenIdCounter;
 
 
+    
     //metadata for nfts
     // gnar and goon/nay uris - note glitch is in both
     //use chain link randomness to select random metadata
@@ -103,6 +104,27 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
         "https://gndg-metadata.vercel.app/api/WVRP-2360"
     ];
 
+    function getMetadata(uint a, uint b) public view returns(string memory){
+        require(a < 2, "value must be: [0|1]");
+        require(b < 3, "value must be: [0|1|2]");
+        
+        if (a == 0){
+            return gnarUrisIpfs[b];
+        } else {
+            return nayGoonUrisIpfs[b];
+        }
+    }
+    //set IPFS of current array one at a time
+    function setMetadata(uint a, uint b, string memory uri) public onlyOwner{
+        require(a < 2, "value must be: [0|1]");
+        require(b < 3, "value must be: [0|1|2]");
+        
+        if (a == 0){
+            gnarUrisIpfs[b] = uri;
+        } else {
+            nayGoonUrisIpfs[b] = uri;
+        }
+    }
 //events
 //*
 //*
@@ -113,7 +135,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
 //*
 //*
 
-    constructor(uint updateInterval, address _priceFeed, uint64 subscriptionId) VRFConsumerBaseV2(vrfCoordinator) ERC1155("") {
+    constructor(uint updateInterval, address _priceFeed, uint64 subscriptionId) payable VRFConsumerBaseV2(vrfCoordinator) ERC1155("") {
         interval = updateInterval;
         lastTimeStamp = block.timestamp;
 
@@ -143,7 +165,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
         _tokenIdCounter.increment();
 
         bytes memory data;
-        string memory defaultUri = gnarUrisIpfs[0];
+        string memory defaultUri = gnarUrisIpfs[1];
         _mint(to, tokenId, amount, data);
         _setURI(defaultUri);
     }
@@ -176,6 +198,10 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
 
     function setURI(string memory newuri) public onlyOwner {
         _setURI(newuri);
+    }
+
+    function toggleVRF() public onlyOwner{
+        enableVRF = !enableVRF;
     }
 
 
@@ -214,7 +240,11 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
 
         //request random number from chainlink vrf
         //https://vrf.chain.link/rinkeby
-        requestRandomWords();
+        if(enableVRF){
+            requestRandomWords();
+        } else {
+            updateAllTokenUris();
+        }
        
     }
 
@@ -298,4 +328,8 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     {
         super._beforeTokenTransfer(operator, from, to, ids, amounts, data);
     }
+
+    // to support receiving ETH by default
+    receive() external payable {}
+    fallback() external payable {}
 }

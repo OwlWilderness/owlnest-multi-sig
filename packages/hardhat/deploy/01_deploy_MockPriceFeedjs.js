@@ -17,6 +17,7 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const { deployer } = await getNamedAccounts();
   const chainId = await getChainId();
 
+  //constructor args(decimal places, initial answer)
   await deploy("MockV3Aggregator", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
@@ -26,15 +27,8 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   });
 
   // Getting a previously deployed contract
-  const MockV3Aggregator = await ethers.getContract("MockV3Aggregator", deployer);
+  //const MockV3Aggregator = await ethers.getContract("MockV3Aggregator", deployer);
 
-  //await deploy("GNDG", {
-    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
-    //from: deployer,
-    //args: [ 10, MockV3Aggregator.address, 928 ],
-    //log: true,
-    //waitConfirmations: 5,
-  //});
 
   /*  await YourContract.setPurpose("Hello");
   
