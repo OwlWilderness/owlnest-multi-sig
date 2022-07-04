@@ -21,14 +21,14 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
   const chainId = await getChainId();
 
   // Getting a previously deployed contract
-  const MockV3Aggregator = await ethers.getContract("MockV3Aggregator", deployer);
+  //const MockV3Aggregator = await ethers.getContract("MockV3Aggregator", deployer);
   
-
+  //"0x327e23A4855b6F663a28c5161541d69Af8973302"
   //constructor(uint updateInterval, address _priceFeed, uint64 subscriptionId)
   await deploy("GNDG", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: [ 10, MockV3Aggregator.address, 139 ],
+    args: [ 10, "0x327e23A4855b6F663a28c5161541d69Af8973302", 139 ],
     //log: true,
     waitConfirmations: 5,
   });

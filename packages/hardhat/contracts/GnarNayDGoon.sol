@@ -30,14 +30,17 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     // see https://docs.chain.link/docs/vrf-contracts/#configurations
     //polygon testnet: 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed
     //Rinkeby: 0x6168499c0cFfCaCD319c818142124B7A15E857ab
-    address vrfCoordinator = 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed;
+    //polygon mainnet: 0xAE975071Be8F8eE67addBC1A82488F1C24858067
+    address vrfCoordinator = 0xAE975071Be8F8eE67addBC1A82488F1C24858067;
 
     // The gas lane to use, which specifies the maximum gas price to bump to.
     // For a list of available gas lanes on each network,
     // see https://docs.chain.link/docs/vrf-contracts/#configurations
     //rinkeby: 0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc
     //polygon testnet: 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f
-    bytes32 keyHash = 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
+    //polygon mainnet 500gwei: 0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd
+    //polygon mainnet 1000gwei: 0xd729dc84e21ae57ffb6be0053bf2b0668aa2aaf300a2a7b2ddf7dc0bb6e875a8
+    bytes32 keyHash = 0xd729dc84e21ae57ffb6be0053bf2b0668aa2aaf300a2a7b2ddf7dc0bb6e875a8;
 
     // Depends on the number of requested values that you want sent to the
     // fulfillRandomWords() function. Storing each word costs about 20,000 gas,
@@ -149,6 +152,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
         // BTC/USD Price Feed Contract Address on Rinkeby: https://rinkeby.etherscan.io/address/0xECe365B379E1dD183B20fc5f022230C044d51404
         // ETH / USD Rinkeby 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
         // ETH / USD Polygon 0xF9680D99D6C9589e2a93a78A04A279e509205945
+        // MATIC / ETH Polygon (MATIC)	Crypto	0x327e23A4855b6F663a28c5161541d69Af8973302
         // or the MockPriceFeed Contract
 
         priceFeed = AggregatorV3Interface(_priceFeed);
