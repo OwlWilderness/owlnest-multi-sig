@@ -31,7 +31,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     //polygon testnet: 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed
     //Rinkeby: 0x6168499c0cFfCaCD319c818142124B7A15E857ab
     //polygon mainnet: 0xAE975071Be8F8eE67addBC1A82488F1C24858067
-    address vrfCoordinator = 0xAE975071Be8F8eE67addBC1A82488F1C24858067;
+    address vrfCoordinator = 0x7a1BaC17Ccc5b313516C5E16fb24f7659aA5ebed;
 
     // The gas lane to use, which specifies the maximum gas price to bump to.
     // For a list of available gas lanes on each network,
@@ -40,7 +40,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     //polygon testnet: 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f
     //polygon mainnet 500gwei: 0xcc294a196eeeb44da2888d17c0625cc88d70d9760a69d58d853ba6581a9ab0cd
     //polygon mainnet 1000gwei: 0xd729dc84e21ae57ffb6be0053bf2b0668aa2aaf300a2a7b2ddf7dc0bb6e875a8
-    bytes32 keyHash = 0xd729dc84e21ae57ffb6be0053bf2b0668aa2aaf300a2a7b2ddf7dc0bb6e875a8;
+    bytes32 keyHash = 0x4b09e658ed251bcafeebbc69400383d49f344ace09b9576fe248bb02c003fe9f;
 
     // Depends on the number of requested values that you want sent to the
     // fulfillRandomWords() function. Storing each word costs about 20,000 gas,
@@ -58,7 +58,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     uint32 numWords =  1;
 
     uint256[] public s_randomWords;
-    uint256 public s_randomMod2  = 1;
+    uint256 public s_randomMod3  = 1;
     uint256 public s_requestId;
 
     string public lastWvrp = "goon";
@@ -80,6 +80,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     uint public lastTimeStamp;
     int256 public currentPrice;
     bool public enableVRF = false;
+    bool public upkeepOnPriceChange = true;
 
     //reference to chainlink aggragator and random number contract;
     AggregatorV3Interface public priceFeed;
@@ -189,6 +190,23 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
         return price;
     }
 
+    //update token uris for wvrp and random number
+    function updateAllTokenUris(uint index) public onlyOwner {
+                
+        //determine uri based on wvrp
+        string memory uri;
+        if(stringEqual("gnar", wvrp)){
+            uri = gnarUrisIpfs[index];
+        } else {
+            uri = nayGoonUrisIpfs[index];
+        }
+
+        //update each token uri
+        setURI(uri);
+
+        emit TokensUpdated(wvrp,index);
+    }    
+
 //public helpers
 //*
 //*
@@ -207,6 +225,17 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     function toggleVRF() public onlyOwner{
         enableVRF = !enableVRF;
     }
+
+    function setRandomWords(uint256[] memory words) public onlyOwner {
+        s_randomWords = words;
+        s_randomMod3 = words[0] % 3;
+    }
+
+    function toggleUpkeepOnPriceChange() public onlyOwner {
+        upkeepOnPriceChange = !upkeepOnPriceChange;
+    }
+
+
 
 
 //external 
@@ -229,10 +258,10 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
         int latestPrice = getLatestPrice();
 
         //nothing to see here price has not changed
-        if(latestPrice == currentPrice) {
+        if(upkeepOnPriceChange && (latestPrice == currentPrice)) {
             return;
         }
-
+        
         //update wvrp based on current market trend
         lastWvrp = wvrp;
         if (latestPrice < currentPrice){
@@ -241,14 +270,19 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
             wvrp = "goon";
         }
         currentPrice = latestPrice;
+        
+        s_randomMod3 = s_randomWords[0] % 3;
+        
+        updateAllTokenUris(s_randomMod3);
 
         //request random number from chainlink vrf
         //https://vrf.chain.link/rinkeby
         if(enableVRF){
             requestRandomWords();
-        } else {
-            updateAllTokenUris();
-        }
+        } 
+        
+        
+        
        
     }
 
@@ -261,25 +295,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     }
 
 //internal methods
-    //update token uris for wvrp and random number
-    function updateAllTokenUris() internal {
-        
-        //determine uri based on wvrp
-        string memory uri;
-        if(stringEqual("gnar", wvrp)){
-            uri = gnarUrisIpfs[s_randomMod2];
-        } else {
-            uri = nayGoonUrisIpfs[s_randomMod2];
-        }
 
-        //update each token uri
-        //for (uint i = 0; i < _tokenIdCounter.current(); i++){
-        //    _setTokenURI(i,uri);
-        //} 
-        setURI(uri);
-
-        emit TokensUpdated(wvrp,s_randomMod2);
-    }
 
 //chainlink VRF
     //support for chainlink randomness
@@ -300,31 +316,8 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
         uint256[] memory randomWords
     ) internal override {
         s_randomWords = randomWords; 
-        uint256 randomMod2 = (randomWords[0] % 2) ;
-        
-        if((randomMod2 == s_randomMod2) && (stringEqual(wvrp,lastWvrp))){
-            //do not update if random number and wvrp have not changed
-            return;
-        }
-        s_randomMod2 = randomMod2 ;
-        updateAllTokenUris();
     }
 
-    //function mint(address account, uint256 id, uint256 amount, bytes memory data)
-    //    public
-    //    onlyOwner
-    //{
-    //    _requireNotPaused();
-    //    _mint(account, id, amount, data);
-    //}
-
-    //function mintBatch(address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
-    //    public
-    //    onlyOwner
-    //{
-    //    _requireNotPaused();
-    //    _mintBatch(to, ids, amounts, data);
-    //}
 
     function _beforeTokenTransfer(address operator, address from, address to, uint256[] memory ids, uint256[] memory amounts, bytes memory data)
         internal

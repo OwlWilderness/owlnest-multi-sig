@@ -22,13 +22,16 @@ module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
 
   // Getting a previously deployed contract
   //const MockV3Aggregator = await ethers.getContract("MockV3Aggregator", deployer);
-  
-  //"0x327e23A4855b6F663a28c5161541d69Af8973302"
+  //MockV3Aggregator.address
+  //polygon: "0x327e23A4855b6F663a28c5161541d69Af8973302"
+  //polygon: ETH / USD Ethereum	Crypto	N/A	27s	8	0xF9680D99D6C9589e2a93a78A04A279e509205945
+  //mumbai: ETH / USD	N/A	1h	8	0x0715A7794a1dc8e42615F059dD6e406A6594651A
+  //mumbai: LINK / MATIC	0.5%	1h	18	0x12162c3E810393dEC01362aBf156D7ecf6159528
   //constructor(uint updateInterval, address _priceFeed, uint64 subscriptionId)
   await deploy("GNDG", {
     // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
     from: deployer,
-    args: [ 10, "0x327e23A4855b6F663a28c5161541d69Af8973302", 139 ],
+    args: [ 300, "0x12162c3E810393dEC01362aBf156D7ecf6159528", 928 ],
     //log: true,
     waitConfirmations: 5,
   });
