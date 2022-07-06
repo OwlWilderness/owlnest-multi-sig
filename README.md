@@ -1,24 +1,17 @@
-# 🏗 Title
+# 🏗 Alchemy Road 2 Web 3 Week 5 on Scaffold-Eth
 
-> block text 🚀
+> ERC-1155 on Mumbai 🚀
 
-🧪 regular text:
-
-![image](https://wvrps.mypinata.cloud/ipfs/Qmeq3o4g8hW2GJQGwzmFn6tqageTHfcMgVAmRUNo5W13Uy/WVRP-678.png)
-
-[HTTP Link](https://https://gndg-metadata.vercel.app/api/WVRP-678/)
-
-`grey highlight`
-
-```
-code
-```
-- bullet
+- contract: https://mumbai.polygonscan.com/address/0xa40b1c58fb12D2b7f664D482cF4A16186f35016f
+- verified contract code: https://mumbai.polygonscan.com/address/0xa40b1c58fb12D2b7f664D482cF4A16186f35016f#code
+- Scaffold-Eth Debug: https://gndg.surge.sh/
+- VRF Subscription: https://vrf.chain.link/mumbai/928
+- Keeper: https://keepers.chain.link/mumbai/1940
 
 
 ## 🏄‍♂️ stumbled upon
 
-#### to add @chainlink\contracts:
+### to add @chainlink\contracts:
 [scaffold-eth-with-austin-griffith-chainlink-hackathon-workshop](https://blockpaths.com/projects/scaffold-eth-with-austin-griffith-chainlink-hackathon-workshop/)
 35:50
 
@@ -54,4 +47,5 @@ To get mainnet Polygon LINK token from the Ethereum mainnet, you must follow a 2
 - Swap the LINK for the ERC677 version via the Pegswap, deployed by the Chainlink.
 
 The Polygon bridge brings over an ERC20 version of LINK, and LINK is an ERC677, so we just have to update it with this swap.
+
 
