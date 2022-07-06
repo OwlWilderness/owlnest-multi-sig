@@ -57,7 +57,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     // Cannot exceed VRFCoordinatorV2.MAX_NUM_WORDS.
     uint32 numWords =  1;
 
-    uint256[] public s_randomWords;
+    uint256[] public s_randomWords = [1];
     uint256 public s_randomMod3  = 1;
     uint256 public s_requestId;
 
@@ -159,7 +159,7 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
         priceFeed = AggregatorV3Interface(_priceFeed);
         currentPrice = getLatestPrice();
         counter = 0;    
-        safeMint(msg.sender, 1);
+        safeMint(address(this), 1);
     }
 
 //public funcitons
@@ -191,20 +191,20 @@ contract GNDG is ERC1155, Ownable, ERC1155Burnable, ERC1155Supply, KeeperCompati
     }
 
     //update token uris for wvrp and random number
-    function updateAllTokenUris(uint index) public onlyOwner {
+    function updateAllTokenUris() public onlyOwner {
                 
         //determine uri based on wvrp
         string memory uri;
         if(stringEqual("gnar", wvrp)){
-            uri = gnarUrisIpfs[index];
+            uri = gnarUrisIpfs[s_randomMod3];
         } else {
-            uri = nayGoonUrisIpfs[index];
+            uri = nayGoonUrisIpfs[s_randomMod3];
         }
 
         //update each token uri
         setURI(uri);
 
-        emit TokensUpdated(wvrp,index);
+        emit TokensUpdated(wvrp,s_randomMod3);
     }    
 
 //public helpers
