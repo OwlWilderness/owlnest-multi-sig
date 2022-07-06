@@ -2,11 +2,16 @@
 
 > ERC-1155 on Mumbai 🚀
 
+This implementation mints an ERC-1155 token that uses wvrp nft images to represent a bull or bear market.  Upon upkeep a random number is requested and the uri is set using the last requested random number and the current trend of a chainlink pricefeed.
+
 - contract: https://mumbai.polygonscan.com/address/0xa40b1c58fb12D2b7f664D482cF4A16186f35016f
 - verified contract code: https://mumbai.polygonscan.com/address/0xa40b1c58fb12D2b7f664D482cF4A16186f35016f#code
 - Scaffold-Eth Debug: https://gndg.surge.sh/
 - VRF Subscription: https://vrf.chain.link/mumbai/928
 - Keeper: https://keepers.chain.link/mumbai/1940
+
+## To Do
+- display image of current nft metadata
 
 
 ## 🏄‍♂️ stumbled upon
