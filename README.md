@@ -12,6 +12,8 @@ This implementation mints an ERC-1155 token that uses wvrp nft images to represe
 - VRF Subscription: https://vrf.chain.link/mumbai/928
 - Keeper: https://keepers.chain.link/mumbai/1940
 
+Based on: https://docs.alchemy.com/alchemy/road-to-web3/weekly-learning-challenges/5.-connect-apis-to-your-smart-contracts-using-chainlink
+
 ## To Do
 - display image of current nft metadata
 
