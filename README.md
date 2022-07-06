@@ -1,5 +1,7 @@
 # 🏗 Alchemy Road 2 Web 3 Week 5 on Scaffold-Eth
 
+Debug Contract Using Scaffold-eth Dapp:  https://gndg.surge.sh/
+
 > ERC-1155 on Mumbai 🚀
 
 This implementation mints an ERC-1155 token that uses wvrp nft images to represent a bull or bear market.  Upon upkeep a random number is requested and the uri is set using the last requested random number and the current trend of a chainlink pricefeed.
