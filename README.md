@@ -57,4 +57,44 @@ To get mainnet Polygon LINK token from the Ethereum mainnet, you must follow a 2
 
 The Polygon bridge brings over an ERC20 version of LINK, and LINK is an ERC677, so we just have to update it with this swap.
 
+### Deploying Mock Aggregator on localhost
+Create contract MockPriceFeed.sol with the following contents:
+```
+//SPDX-Licence-Identifer: MIT
+pragma solidity ^0.6.4;
 
+import "@chainlink/contracts/src/v0.6/tests/MockV3Aggregator.sol";
+```
+
+Create a deploy script like the following
+```
+//01_deploy_MockPriceFeedjs.js
+
+const { ethers } = require("hardhat");
+
+const localChainId = "31337";
+
+
+module.exports = async ({ getNamedAccounts, deployments, getChainId }) => {
+  const { deploy } = deployments;
+  const { deployer } = await getNamedAccounts();
+  const chainId = await getChainId();
+
+  //constructor args(decimal places, initial answer)
+  await deploy("MockV3Aggregator", {
+    // Learn more about args here: https://www.npmjs.com/package/hardhat-deploy#deploymentsdeploy
+    from: deployer,
+    args: [ 12, 123456789123 ],
+    log: true,
+    waitConfirmations: 5,
+  });
+
+};
+module.exports.tags = ["MockV3Aggregator"];
+```
+
+Use MockV3Aggregator.address when deploying on localhost
+```
+  const MockV3Aggregator = await ethers.getContract("MockV3Aggregator", deployer);
+  //MockV3Aggregator.address
+```
